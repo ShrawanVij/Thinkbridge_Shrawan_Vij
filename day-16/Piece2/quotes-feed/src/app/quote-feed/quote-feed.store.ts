@@ -21,7 +21,8 @@ export class QuoteFeedStore {
     }
 
     return this.quotes().filter((quote) =>
-      quote.author.toLowerCase().includes(term),
+      quote.author.toLowerCase().includes(term) ||
+      quote.text.toLowerCase().includes(term),
     );
   });
 
