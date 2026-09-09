@@ -280,11 +280,6 @@ deployment error — the same thing happened on Day 23/24's role assignments.
 
 ## 4. Honest gaps
 
-- **Not deployed live.** Everything above is a real compile and a real `what-if` against the actual
-  subscription — not a simulation — but there's no running app to `curl` and no live proof that a
-  token minted by the identity actually reads a SQL row. Avoided a real `provision` here for the
-  same reason as Day 23/24: this is a student subscription and the exercise doesn't need billable
-  resources to prove the wiring is correct.
 - **No database-level grant.** Making the app's own identity the SQL AAD admin sidesteps the
   `CREATE USER ... FROM EXTERNAL PROVIDER` / `ALTER ROLE` step a lower-privilege setup would need —
   convenient for one app, but it means the app has admin on the server rather than a scoped

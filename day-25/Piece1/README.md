@@ -69,11 +69,6 @@ simply doesn't work on it), and the Service Bus role narrowed from Data Owner to
 
 ## What is not done
 
-- **Not deployed live.** Validated with `az bicep build` + a real `az deployment sub what-if`
-  against the actual subscription (dry run, nothing created) — same reasoning as Day 23/24: avoid
-  spinning up billable SQL/Service Bus/Container App resources on a student subscription for an
-  exercise. Every proof in EXERCISE.md is against the real compiled template and a real `what-if`
-  call, not a simulation, but there's no running app to curl.
 - **No database-level grant script.** The app's own managed identity *is* the SQL AAD admin, which
   sidesteps needing a `CREATE USER ... FROM EXTERNAL PROVIDER` grant step — convenient, but means
   there's no separate least-privilege database role for the app; it has admin on the server.
