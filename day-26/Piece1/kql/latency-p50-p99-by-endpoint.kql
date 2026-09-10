@@ -1,0 +1,13 @@
+// p50/p99 latency by endpoint, last 24h.
+// Endpoint = request name (verb + route template, e.g. "POST /cqrs/quotes"), not the raw URL —
+// grouping by raw URL would split /cqrs/quotes/feed?page=1 and ?page=2 into separate rows.
+requests
+| where timestamp > ago(24h)
+| summarize
+    requestCount = count(),
+    p50Ms = percentile(duration, 50),
+    p95Ms = percentile(duration, 95),
+    p99Ms = percentile(duration, 99),
+    failureRate = round(100.0 * countif(success == false) / count(), 2)
+    by name
+| order by p99Ms desc

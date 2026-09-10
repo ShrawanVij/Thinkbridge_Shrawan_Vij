@@ -1,0 +1,14 @@
+// Dependency call breakdown, last 24h: every outbound call this app makes — SQLite/SQL,
+// Service Bus send, and any HttpClient call — grouped by dependency type and target, with
+// success rate and latency. This is what tells you whether a slow endpoint (from the
+// latency query) is slow because of its own code or because of what it's calling.
+dependencies
+| where timestamp > ago(24h)
+| summarize
+    callCount = count(),
+    failedCount = countif(success == false),
+    failureRate = round(100.0 * countif(success == false) / count(), 2),
+    avgDurationMs = round(avg(duration), 1),
+    p95Ms = percentile(duration, 95)
+    by type, target, name
+| order by callCount desc

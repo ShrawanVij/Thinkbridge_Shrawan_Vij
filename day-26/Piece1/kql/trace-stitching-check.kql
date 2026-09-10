@@ -1,0 +1,14 @@
+// Pulls the full request + dependency tree for one operation_Id (= one W3C trace id).
+//
+// Two separate operation_Ids to look at here, not one: the outbox pattern means the original
+// HTTP request's trace ends before the relay ever polls, so the relay deliberately starts a
+// *new* trace and Links back to the original rather than pretending to be its child (see
+// OutboxRelay.StartRelayActivity). Run this once with the original request's operation_Id to
+// see the API leg, and once with the relay's operation_Id to see relay -> Service Bus send ->
+// Service Bus process -> the worker's DB write as one continuous trace. App Insights' own
+// "Related Operation" panel on a request follows that Link for you; this query doesn't span it.
+let targetOperationId = "<paste an operation_Id here>";
+union requests, dependencies
+| where operation_Id == targetOperationId
+| project timestamp, itemType, name, target, duration, success, operation_Id, operation_ParentId, id
+| order by timestamp asc

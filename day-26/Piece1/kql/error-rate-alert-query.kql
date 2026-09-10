@@ -1,0 +1,8 @@
+// Error-rate alert body — evaluated on a 5-minute window by the scheduled query rule in
+// infra/modules/alerts.bicep. Requires at least 10 requests in the window so a quiet period
+// with one failed request out of one total doesn't read as "100% error rate".
+requests
+| where timestamp > ago(5m)
+| summarize total = count(), failed = countif(success == false)
+| extend errorRatePercent = round(100.0 * failed / total, 2)
+| where total >= 10 and errorRatePercent > 5
