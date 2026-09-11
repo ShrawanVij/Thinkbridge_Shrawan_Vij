@@ -63,9 +63,9 @@ otel.WithTracing(tracing =>
 
 `APPLICATIONINSIGHTS_CONNECTION_STRING` is already wired into the Container App's environment
 via the AVM `monitoring` module's output, so in Azure this exports straight to App Insights with
-no further change. Locally there's no
-live App Insights connection string, so the console exporter is what all the proof below comes
-from — same spans, different sink.
+no further change — confirmed later in this section against a real deployment. The bug-hunting in
+§2/§3 below was done locally first, where there's no live App Insights connection string, so the
+console exporter is what that proof comes from — same spans, different sink.
 
 Also fixed while in here: the Serilog `TraceId` enrichment was pushing
 `HttpContext.TraceIdentifier`, not `Activity.Current.TraceId` — two different ids that happen to
@@ -173,16 +173,21 @@ Activity.TraceId: fcb478656d7500e3809009400fc87669   Activity.DisplayName: main
 Relay publish → Service Bus send → Service Bus process (the worker) → the worker's own DB
 write — one trace id, confirmed from a real run's actual output, not asserted.
 
-Same trace, viewed in Jaeger (local OTLP export, real run — see README.md for how to reproduce):
+Same trace, viewed for real in Application Insights (`appi-br6lioc2umrao`) — deployed the current
+code to a live Container App, pointed it at a real Service Bus namespace, and generated the same
+`POST /cqrs/quotes` call against it:
 
-![Distributed trace: outbox.relay.publish spanning Service Bus send, both subscription workers processing it, and each worker's DB write](Screenshot/distributed-trace-outbox-to-worker.png)
+![End-to-end transaction details in Application Insights: the POST /cqrs/quotes request linked to outbox.relay.publish, which fans out through Service Bus send to both subscription workers and their DB writes](Screenshot/distributed-trace-azure.png)
 
-9 spans, depth 4, 770.96ms total: `outbox.relay.publish` → `ServiceBusSender.Send`, and in
-parallel the two subscriptions' `ServiceBusProcessor.ProcessMessage` (this topic fans out to both
-`notify-sub` and `audit-sub` — see `AuditSubscriptionWorker`/`NotifySubscriptionWorker`), each
-followed by its own `ServiceBusReceiver.Complete` and, for the audit subscription, the `main` /
-`thinkschool` span that's the `INSERT INTO AuditLogs` from §2's console dump. Visual confirmation
-of the same trace id the log grep above already proved.
+This is the same operation id (`e768aad9be7035832f1dc1f98ef42daf`) queried directly via KQL
+earlier in this section, now in the Portal's own transaction view. It shows more than the
+original local run did: the root `quotes-api` **request** (201, 15.6ms) is right there at the
+top, with a `Link to outbox.relay.publish` underneath it — Application Insights rendering the
+same trace-link relationship described below, not just the outbox side of it. Under
+`outbox.relay.publish`, the tree fans out through Service Bus `Message`/send into
+`ServiceBusProcessor.Process` for both subscriptions, each with its own DB write and
+`ServiceBusReceiver.Complete` — one real, live trace connecting the request, the relay, Service
+Bus, both workers, and their database writes.
 
 **And it connects back to the original API request.** `outbox.relay.publish`'s `Activity.Links`
 points at `3d9343a9fca8d9c18b51947cd5552130` — the trace id of the original `POST /cqrs/quotes`

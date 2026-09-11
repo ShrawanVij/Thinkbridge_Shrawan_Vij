@@ -16,13 +16,14 @@ the error-rate alert rule, and the real captured proof that a trace now stitches
 | ServiceBus spans emitted after the fix | Send, Process, Receive, Complete — all correlated |
 | Trace IDs shared across outbox-relay → Send → Process → DB write (real run) | **1** (`fcb478656d75...`) |
 | KQL queries written | **3** (p50/p99 by endpoint, dependency breakdown, error-rate) |
-| KQL queries validated against a real App Insights resource | **3 of 3** (valid schema, 0 rows — resource has no live traffic) |
+| KQL queries validated against a real App Insights resource | **3 of 3**, valid schema — later confirmed against real live traffic from an actual deployment |
 | Alert rule `what-if` against the real subscription | **1 to create, 0 errors** |
 
-Distributed trace, Jaeger, real run (`outbox.relay.publish` → Service Bus send → both
-subscription workers → each worker's DB write, one trace id, 9 spans):
+Distributed trace, live in Application Insights — the real `POST /cqrs/quotes` request, linked to
+`outbox.relay.publish`, fanning out through Service Bus to both subscription workers and their DB
+writes, all one operation:
 
-![Distributed trace: outbox.relay.publish spanning Service Bus send, both subscription workers processing it, and each worker's DB write](Screenshot/distributed-trace-outbox-to-worker.png)
+![End-to-end transaction details in Application Insights: the POST /cqrs/quotes request linked to outbox.relay.publish, which fans out through Service Bus send to both subscription workers and their DB writes](Screenshot/distributed-trace-azure.png)
 
 ## What changed
 
@@ -52,7 +53,7 @@ day-26/Piece1/
 ├── QuotesApi/                the application, with this day's observability fix applied
 ├── redis/                    docker-compose for local Redis
 ├── servicebus-emulator/      docker-compose for the local Service Bus emulator
-├── Screenshot/                the Jaeger distributed-trace screenshot
+├── Screenshot/                the Application Insights distributed-trace screenshot
 ├── kql/
 │   ├── latency-p50-p99-by-endpoint.kql
 │   ├── dependency-breakdown.kql
