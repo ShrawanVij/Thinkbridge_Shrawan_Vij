@@ -28,21 +28,19 @@ infra:
 - `denySettings.mode: denyDelete` — once provisioned, nobody (no principal, no portal click) can delete a resource the stack manages except through the stack itself.
 - `actionOnUnmanage` — if a resource is removed from the Bicep and re-provisioned, the stack deletes it (and the resource group, if the whole stack goes) instead of orphaning it — this is what makes teardown clean.
 
+`deploymentStacks` in `azure.yaml` only takes effect if the `deployment.stacks` alpha feature is turned on for the `azd` CLI (`azd config set alpha.deployment.stacks on`); without it, `azd provision` silently falls back to a plain `az deployment sub create` and the deny-delete/unmanage settings above are never actually applied, with no error raised.
+
 Per-environment values (SKU tiers, replica counts, container image, the existing Container Apps environment ID, `SQL_ADMIN_PASSWORD`) are supplied through `azd env set` per environment, referenced in `infra/main.parameters.json` as `${VAR_NAME}` placeholders — not hardcoded, and not two separate parameter files like Day 23, since each `azd environment` (`dev`, `prod`) now owns its own `.env` under `.azure/<name>/` (gitignored — holds the SQL admin password).
 
 ## Deploy output — dev
 
 ```
-$ azd env new dev
-New environment 'dev' was set as default
+$ azd env select dev
+$ azd provision --no-prompt
 
-$ azd env set AZURE_LOCATION centralindia -e dev
-$ azd env set CONTAINER_APPS_ENVIRONMENT_ID <existing thinkschool-env id> -e dev
-$ azd env set SQL_ADMIN_PASSWORD <secret> -e dev
+Provisioning Azure resources (azd provision)
 
-$ azd provision --preview -e dev --no-prompt
-Previewing Azure resource changes (azd provision --preview)
-This is a preview. No changes will be applied to your Azure resources.
+  WARNING: Feature 'deployment.stacks' is in alpha stage.
 
 Initialize bicep provider
 Reading subscription and location from environment...
@@ -50,35 +48,28 @@ Subscription: Azure for Students (5448e1e9-8c94-4d57-ac78-37733af38ee8)
 Location: Central India
 
 Creating a deployment plan
-Generating infrastructure preview
-  Resources:
+Validating deployment
+Creating/Updating resources
 
-  Create : Resource group        : rg-quotes-dev
-  Create : Container App         : quotes-api-dev
-  Create : Service Bus Namespace : sb-quotes-dev
-  Create : Azure SQL Server      : sql-quotes-dev
+  (✓) Done: Resource group: rg-quotes-dev (3.181s)
+  (✓) Done: Service Bus Namespace: sb-quotes-dev (1.467s)
+  (✓) Done: Azure SQL Server: sql-quotes-dev-tspowcmk2r5s6 (8.418s)
+  (✓) Done: Container App: quotes-api-dev (18.271s)
 
-SUCCESS: Generated provisioning preview in 23 seconds.
+SUCCESS: Your application was provisioned in Azure in 2 minutes 39 seconds.
 ```
+
+SQL server names are globally unique across all of Azure (they resolve as `<name>.database.windows.net`), not just within a subscription — `sql-quotes-dev` alone collides with someone else's server, so `modules/sql.bicep`'s `serverName` is suffixed with `uniqueString(resourceGroup().id)` in `resources.bicep`.
 
 ## Deploy output — prod (promoted)
 
 ```
-$ azd env new prod
-New environment 'prod' created and set as default
+$ azd env select prod
+$ azd provision --no-prompt
 
-$ azd env set SQL_SKU_NAME S1 -e prod
-$ azd env set SQL_SKU_TIER Standard -e prod
-$ azd env set SQL_MAX_SIZE_BYTES 10737418240 -e prod
-$ azd env set SERVICE_BUS_SKU_NAME Standard -e prod
-$ azd env set API_MIN_REPLICAS 2 -e prod
-$ azd env set API_MAX_REPLICAS 10 -e prod
-$ azd env set API_CPU 1.0 -e prod
-$ azd env set API_MEMORY 2.0Gi -e prod
+Provisioning Azure resources (azd provision)
 
-$ azd provision --preview -e prod --no-prompt
-Previewing Azure resource changes (azd provision --preview)
-This is a preview. No changes will be applied to your Azure resources.
+  WARNING: Feature 'deployment.stacks' is in alpha stage.
 
 Initialize bicep provider
 Reading subscription and location from environment...
@@ -86,18 +77,49 @@ Subscription: Azure for Students (5448e1e9-8c94-4d57-ac78-37733af38ee8)
 Location: Central India
 
 Creating a deployment plan
-Generating infrastructure preview
-  Resources:
+Validating deployment
+Creating/Updating resources
 
-  Create : Resource group        : rg-quotes-prod
-  Create : Container App         : quotes-api-prod
-  Create : Service Bus Namespace : sb-quotes-prod
-  Create : Azure SQL Server      : sql-quotes-prod
+  (✓) Done: Resource group: rg-quotes-prod (2.202s)
+  (✓) Done: Service Bus Namespace: sb-quotes-prod (536ms)
+  (✓) Done: Azure SQL Server: sql-quotes-prod-bbh4g33kv7xqw (7.016s)
+  (✓) Done: Container App: quotes-api-prod (16.578s)
 
-SUCCESS: Generated provisioning preview in 22 seconds.
+SUCCESS: Your application was provisioned in Azure in 2 minutes 32 seconds.
 ```
 
-Same template, same modules, two completely separate resource groups and SKU tiers — driven entirely by which `azd` environment is active. (Ran with `--preview` rather than a real `provision` to avoid spinning up billable SQL/Service Bus/Container App resources on a student subscription just for this exercise — the preview is a genuine dry-run against the Deployment Stacks API, not a simulation.)
+Same template, same modules, two completely separate resource groups and SKU tiers — driven entirely by which `azd` environment is active:
+
+| | dev | prod |
+|---|---|---|
+| SQL DB | Basic, 2 GB | Standard S1, 10 GB |
+| Service Bus | Basic | Standard |
+| Container App replicas | 0-1 | 2-10 |
+
+## Verifying the stack, not just the deployment
+
+`azd provision` reporting success only proves resources exist — the actual deliverable is that they're managed by a Deployment Stack, not a plain deployment:
+
+```
+$ az stack sub list -o table
+Name             State      Last Modified
+azd-stack-dev    succeeded  ...
+azd-stack-prod   succeeded  ...
+
+$ az stack sub show -n azd-stack-dev --query "{denySettings:denySettings.mode, actionOnUnmanage:actionOnUnmanage, resourceCount:length(resources)}"
+{
+  "actionOnUnmanage": {
+    "managementGroups": "detach",
+    "resourceGroups": "delete",
+    "resources": "delete",
+    "resourcesWithoutDeleteSupport": "fail"
+  },
+  "denySettings": "denyDelete",
+  "resourceCount": 7
+}
+```
+
+`azd-stack-prod` reports the identical `denySettings`/`actionOnUnmanage` shape. Both stacks are real `Microsoft.Resources/deploymentStacks` objects at subscription scope — not the plain `az deployment sub` resources you'd get if the alpha flag above were left off.
 
 ## Deployment Stacks vs plain deployments — one line
 
