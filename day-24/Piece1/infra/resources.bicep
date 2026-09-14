@@ -58,7 +58,7 @@ module api 'modules/api.bicep' = {
 module sql 'modules/sql.bicep' = {
   name: 'sql'
   params: {
-    serverName: 'sql-quotes-${environmentName}'
+    serverName: 'sql-quotes-${environmentName}-${uniqueString(resourceGroup().id)}'
     databaseName: 'quotesdb'
     location: location
     adminLogin: sqlAdminLogin
