@@ -44,6 +44,7 @@ export class CreateQuoteFormComponent {
           const result = await firstValueFrom(this.quoteService.createQuote(this.model()));
           this.successMessage.set(`Quote #${result.id} by ${result.author} added.`);
           this.model.set({ author: '', text: '' });
+          this.quoteForm().reset();
           return undefined;
         } catch (err) {
           if (err instanceof HttpErrorResponse && err.status === 400 && err.error?.errors) {
