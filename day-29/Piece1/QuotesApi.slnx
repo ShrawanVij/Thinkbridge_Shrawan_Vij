@@ -1,0 +1,25 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Host/">
+    <Project Path="src/Host/QuotesApi/QuotesApi.csproj" />
+  </Folder>
+  <Folder Name="/src/Contracts/">
+    <Project Path="src/Contracts/QuotesApi.Contracts/QuotesApi.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Quotes/">
+    <Project Path="src/Modules/Quotes/QuotesApi.Modules.Quotes/QuotesApi.Modules.Quotes.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Identity/">
+    <Project Path="src/Modules/Identity/QuotesApi.Modules.Identity/QuotesApi.Modules.Identity.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Collections/">
+    <Project Path="src/Modules/Collections/QuotesApi.Modules.Collections/QuotesApi.Modules.Collections.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Engagement/">
+    <Project Path="src/Modules/Engagement/QuotesApi.Modules.Engagement/QuotesApi.Modules.Engagement.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/QuotesApi.Tests/QuotesApi.Tests.csproj" />
+  </Folder>
+</Solution>

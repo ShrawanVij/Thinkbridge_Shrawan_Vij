@@ -4,6 +4,20 @@
 
 Accepted — 2026-09-16
 
+**Update, Day 29 (build day):** the module the sections below call "Notifications" was built as
+**Engagement** (Jobs/Messaging/Audit, matching the name a since-noticed Day 22 scaffold already
+used for the same concept), and the outbox stayed inside **Quotes** rather than moving with it —
+the outbox row is written in the same DB transaction as the `Quote` insert, which only works if
+both live in one `DbContext`. The boundary reasoning below still held; this is the one detail the
+real code corrected. Full account in [`../../day-29/Piece1/EXERCISE.md`](../../day-29/Piece1/EXERCISE.md).
+
+**Update, Day 30 (infra):** the Decision and Consequences below assumed the modular split would
+stay deploy-neutral — same Container App, same Bicep template, no infra change. That assumption is
+now superseded: Day 30 provisions fresh Azure infra for the modular build and decommissions the
+Week 5 resources built for the old flat `QuotesApi`, rather than reusing them. The architecture
+choice itself (modular monolith over microservices) is unaffected — only the "infra stays as-is"
+consequence no longer holds.
+
 ## Context
 
 By Day 27, `QuotesApi` is a single ASP.NET Core project (`QuotesApi.csproj`), one `QuoteDbContext`,
