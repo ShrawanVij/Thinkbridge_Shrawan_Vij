@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Needed for IEndpointRouteBuilder/Results/ClaimsPrincipal binding — this
+         module maps its own endpoints rather than handing that back to Host. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Azure.Core 1.60.0 forwards its own copies of Azure.Identity's
+         credential types (DefaultAzureCredential, ManagedIdentityCredential),
+         which collides with Azure.Identity's own definitions. Aliasing hides
+         Azure.Core's copies from unqualified code so `new
+         ManagedIdentityCredential(...)` unambiguously means Azure.Identity's. -->
+    <PackageReference Include="Azure.Core" Version="1.60.0" Aliases="AzureCoreOnly" />
+    <PackageReference Include="Azure.Identity" Version="1.14.2" />
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.20.2" />
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="MediatR" Version="12.5.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Contracts\QuotesApi.Contracts\QuotesApi.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

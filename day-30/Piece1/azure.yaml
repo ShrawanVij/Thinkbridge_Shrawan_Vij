@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: quotes-stack
+metadata:
+  template: quotes-stack@0.0.1
+
+infra:
+  provider: bicep
+  path: infra
+  module: main
+  deploymentStacks:
+    denySettings:
+      mode: denyDelete
+    bypassStackOutOfSyncError: false
+    actionOnUnmanage:
+      resources: delete
+      resourceGroups: delete
+
+# Points at the Host project's new path (src/Host/QuotesApi) — the old flat
+# QuotesApi/ project this pointed at no longer exists on this branch.
+services:
+  api:
+    project: src/Host/QuotesApi
+    language: dotnet
+    host: containerapp

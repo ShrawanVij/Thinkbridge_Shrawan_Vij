@@ -1,0 +1,17 @@
+<nav class="top-nav">
+  <a routerLink="/quotes" class="brand">QuotesApp</a>
+
+  <div class="nav-links">
+    <a routerLink="/quotes">Quotes</a>
+    @if (isAuthenticated()) {
+      <a routerLink="/collections">Collections</a>
+      <span class="nav-email">{{ email() }}</span>
+      <button type="button" (click)="logout()">Log out</button>
+    } @else {
+      <a routerLink="/login">Log in</a>
+      <a routerLink="/register">Register</a>
+    }
+  </div>
+</nav>
+
+<router-outlet />
