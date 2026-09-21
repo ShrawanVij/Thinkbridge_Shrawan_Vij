@@ -1,0 +1,44 @@
+<main class="detail-page">
+  @if (loading()) {
+    <p>Loading…</p>
+  } @else if (quote(); as q) {
+    <blockquote>{{ q.text }}</blockquote>
+    <p class="quote-author">— {{ q.author }}</p>
+
+    <section class="detail-tags">
+      <h2>Tags</h2>
+
+      @if (q.tags.length) {
+        <ul>
+          @for (tag of q.tags; track tag.id) {
+            <li>
+              {{ tag.name }}
+              @if (isAuthenticated()) {
+                <button type="button" (click)="removeTag(tag.id)" aria-label="Remove tag">×</button>
+              }
+            </li>
+          }
+        </ul>
+      } @else {
+        <p>No tags yet.</p>
+      }
+
+      @if (isAuthenticated()) {
+        <form (ngSubmit)="addTag()" class="add-tag-form">
+          <input type="text" [ngModel]="newTagName()" (ngModelChange)="newTagName.set($event)" name="tagName" placeholder="Add a tag" />
+          <button type="submit">Add</button>
+        </form>
+
+        @if (tagError()) {
+          <p class="error">{{ tagError() }}</p>
+        }
+      }
+    </section>
+
+    @if (isAuthenticated()) {
+      <a [routerLink]="['/quotes', q.id, 'edit']">Edit this quote</a>
+    }
+  } @else {
+    <p>Quote not found.</p>
+  }
+</main>

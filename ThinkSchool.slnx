@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/day-3/" />
+  <Folder Name="/day-3/Peace3/">
+    <Project Path="day-3/Peace3/QuotesApi.Tests/QuotesApi.Tests.csproj" />
+    <Project Path="day-3/Peace3/QuotesApi/QuotesApi.csproj" />
+  </Folder>
+</Solution>

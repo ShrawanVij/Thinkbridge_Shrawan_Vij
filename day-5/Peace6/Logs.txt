@@ -1,0 +1,48 @@
+[01:48:57 INF] [TraceId:] Now listening on: http://localhost:5220
+[01:48:57 INF] Now listening on: http://localhost:5220
+[01:48:57 INF] [TraceId:] Application started. Press Ctrl+C to shut down.
+[01:48:57 INF] Application started. Press Ctrl+C to shut down.
+[01:48:57 INF] [TraceId:] Hosting environment: Development
+[01:48:57 INF] Hosting environment: Development
+[01:48:57 INF] [TraceId:] Content root path: D:\thinkschool\day-5\Peace6\QuotesApi
+[01:48:57 INF] Content root path: D:\thinkschool\day-5\Peace6\QuotesApi
+[01:50:29 INF] [TraceId:d27653dcb0bfaf7ff96b7a4e57473273] Starting resilience test
+[01:50:29 INF] Starting resilience test
+[01:50:29 INF] [TraceId:d27653dcb0bfaf7ff96b7a4e57473273] Start processing HTTP request GET https://httpbin.org/status/503
+[01:50:29 INF] Start processing HTTP request GET https://httpbin.org/status/503
+[01:50:32 INF] [TraceId:d27653dcb0bfaf7ff96b7a4e57473273] Sending HTTP request GET https://httpbin.org/status/503
+[01:50:32 INF] Sending HTTP request GET https://httpbin.org/status/503
+[01:50:33 INF] [TraceId:d27653dcb0bfaf7ff96b7a4e57473273] Received HTTP response headers after 1287.4689ms - 503
+[01:50:33 INF] Received HTTP response headers after 1287.4689ms - 503
+[01:50:33 WRN] [TraceId:d27653dcb0bfaf7ff96b7a4e57473273] Execution attempt. Source: 'resilient-service-default//Retry', Operation Key: 'null', Result: '503', Handled: 'True', Attempt: '0', Execution Time: 1311.8106ms
+[01:50:33 WRN] Execution attempt. Source: 'resilient-service-default//Retry', Operation Key: 'null', Result: '503', Handled: 'True', Attempt: '0', Execution Time: 1311.8106ms
+[01:50:33 WRN] [TraceId:d27653dcb0bfaf7ff96b7a4e57473273] Resilience event occurred. EventName: 'OnRetry', Source: 'resilient-service-default//Retry', Operation Key: 'null', Result: '503'
+[01:50:33 WRN] Resilience event occurred. EventName: 'OnRetry', Source: 'resilient-service-default//Retry', Operation Key: 'null', Result: '503'
+[01:50:34 INF] [TraceId:d27653dcb0bfaf7ff96b7a4e57473273] Sending HTTP request GET https://httpbin.org/status/503
+[01:50:34 INF] Sending HTTP request GET https://httpbin.org/status/503
+[01:50:34 INF] [TraceId:d27653dcb0bfaf7ff96b7a4e57473273] Received HTTP response headers after 250.3244ms - 503
+[01:50:34 INF] Received HTTP response headers after 250.3244ms - 503
+[01:50:34 ERR] [TraceId:d27653dcb0bfaf7ff96b7a4e57473273] Resilience event occurred. EventName: 'OnCircuitOpened', Source: 'resilient-service-default//CircuitBreaker', Operation Key: 'null', Result: '503'
+[01:50:34 ERR] Resilience event occurred. EventName: 'OnCircuitOpened', Source: 'resilient-service-default//CircuitBreaker', Operation Key: 'null', Result: '503'
+[01:50:34 WRN] [TraceId:d27653dcb0bfaf7ff96b7a4e57473273] Execution attempt. Source: 'resilient-service-default//Retry', Operation Key: 'null', Result: '503', Handled: 'True', Attempt: '1', Execution Time: 268.0928ms
+[01:50:34 WRN] Execution attempt. Source: 'resilient-service-default//Retry', Operation Key: 'null', Result: '503', Handled: 'True', Attempt: '1', Execution Time: 268.0928ms
+[01:50:34 WRN] [TraceId:d27653dcb0bfaf7ff96b7a4e57473273] Resilience event occurred. EventName: 'OnRetry', Source: 'resilient-service-default//Retry', Operation Key: 'null', Result: '503'
+[01:50:34 WRN] Resilience event occurred. EventName: 'OnRetry', Source: 'resilient-service-default//Retry', Operation Key: 'null', Result: '503'
+[01:50:35 INF] [TraceId:d27653dcb0bfaf7ff96b7a4e57473273] Execution attempt. Source: 'resilient-service-default//Retry', Operation Key: 'null', Result: 'The circuit is now open and is not allowing calls.', Handled: 'False', Attempt: '2', Execution Time: 0.9821ms
+Polly.CircuitBreaker.BrokenCircuitException: The circuit is now open and is not allowing calls.
+[01:50:35 INF] Execution attempt. Source: 'resilient-service-default//Retry', Operation Key: 'null', Result: 'The circuit is now open and is not allowing calls.', Handled: 'False', Attempt: '2', Execution Time: 0.9821ms
+Polly.CircuitBreaker.BrokenCircuitException: The circuit is now open and is not allowing calls.
+[01:50:35 ERR] [TraceId:d27653dcb0bfaf7ff96b7a4e57473273] Resilience test failed after retries
+Polly.CircuitBreaker.BrokenCircuitException: The circuit is now open and is not allowing calls.
+   at Polly.Outcome`1.ThrowIfException()
+   at Microsoft.Extensions.Http.Resilience.ResilienceHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at Program.<>c.<<<Main>$>b__0_8>d.MoveNext() in D:\thinkschool\day-5\Peace6\QuotesApi\Program.cs:line 197
+[01:50:35 ERR] Resilience test failed after retries
+Polly.CircuitBreaker.BrokenCircuitException: The circuit is now open and is not allowing calls.
+   at Polly.Outcome`1.ThrowIfException()
+   at Microsoft.Extensions.Http.Resilience.ResilienceHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.<SendCoreAsync>g__Core|4_0(HttpRequestMessage request, Boolean useAsync, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at Program.<>c.<<<Main>$>b__0_8>d.MoveNext() in D:\thinkschool\day-5\Peace6\QuotesApi\Program.cs:line 197

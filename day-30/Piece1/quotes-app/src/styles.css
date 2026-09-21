@@ -1,0 +1,58 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #faf9fb;
+  color: #1f1a24;
+}
+
+a {
+  color: #6d28d9;
+}
+
+button {
+  cursor: pointer;
+  border: 1px solid #6d28d9;
+  background: white;
+  color: #6d28d9;
+  border-radius: 6px;
+  padding: 0.4rem 0.9rem;
+}
+
+button:hover {
+  background: #f3e8ff;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.error {
+  color: #b91c1c;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+}

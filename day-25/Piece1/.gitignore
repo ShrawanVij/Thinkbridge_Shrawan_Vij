@@ -1,0 +1,2 @@
+# azd environment state — holds subscription IDs and secrets (SQL_ADMIN_PASSWORD) per environment
+.azure/

@@ -1,0 +1,23 @@
+<main class="collections-page">
+  <h1>My collections</h1>
+
+  <form (ngSubmit)="create()" class="new-collection-form">
+    <input type="text" [ngModel]="newName()" (ngModelChange)="newName.set($event)" name="name" placeholder="Collection name" minlength="3" maxlength="80" />
+    <button type="submit">Create</button>
+  </form>
+
+  @if (loading()) {
+    <p>Loading…</p>
+  } @else if (collections().length === 0) {
+    <p>You don't have any collections yet.</p>
+  } @else {
+    <ul>
+      @for (collection of collections(); track collection.id) {
+        <li>
+          <a [routerLink]="['/collections', collection.id]">{{ collection.name }}</a>
+          ({{ collection.items.length }} quote{{ collection.items.length === 1 ? '' : 's' }})
+        </li>
+      }
+    </ul>
+  }
+</main>

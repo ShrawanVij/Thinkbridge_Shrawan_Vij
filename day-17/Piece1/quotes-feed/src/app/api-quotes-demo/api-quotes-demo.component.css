@@ -1,0 +1,82 @@
+:host {
+  display: block;
+  max-width: 1000px;
+  margin: 0 auto 32px;
+  padding: 24px;
+  background: #faf9fc;
+  border-left: 3px solid #7c5cbf;
+  border-radius: 8px;
+}
+
+h2 {
+  font-size: 1.1rem;
+  margin: 0 0 16px;
+  color: #3b2e5a;
+}
+
+.controls {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  margin-bottom: 16px;
+}
+
+.controls label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #3b2e5a;
+  gap: 4px;
+}
+
+.controls input {
+  width: 80px;
+  padding: 6px 8px;
+  border: 1px solid #ddd6e8;
+  border-radius: 6px;
+  font-family: inherit;
+}
+
+.controls button {
+  padding: 8px 16px;
+  font-family: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: #7c5cbf;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.state {
+  font-size: 0.9rem;
+}
+
+.state.error {
+  color: #b03a5b;
+}
+
+.state.empty,
+.state.loading {
+  color: #6a6178;
+}
+
+.quote-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.quote-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid #ecebf1;
+  font-size: 0.9rem;
+}
+
+.quote-author {
+  color: #7c5cbf;
+  margin-left: 6px;
+}

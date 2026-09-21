@@ -1,0 +1,58 @@
+<main class="feed-page">
+  <header class="feed-header">
+    <h1>Quotes</h1>
+    @if (isAuthenticated()) {
+      <a routerLink="/quotes/new" class="button">New quote</a>
+    }
+  </header>
+
+  <div class="feed-controls">
+    <input
+      type="search"
+      placeholder="Search author or text…"
+      [value]="searchTerm()"
+      (input)="setSearchTerm($any($event.target).value)"
+    />
+
+    <select [value]="sortOrder()" (change)="setSortOrder($any($event.target).value)">
+      <option value="newest">Newest</option>
+      <option value="oldest">Oldest</option>
+      <option value="author">Author</option>
+    </select>
+
+    @if (isAuthenticated()) {
+      <label>
+        <input type="checkbox" [checked]="mineOnly()" (change)="toggleMineOnly()" />
+        My quotes only
+      </label>
+    }
+  </div>
+
+  @if (loading()) {
+    <p>Loading…</p>
+  } @else if (error()) {
+    <p class="error">Couldn't load the feed.</p>
+  } @else if (quotes().length === 0) {
+    <p>No quotes match.</p>
+  } @else {
+    <ul class="quote-list">
+      @for (quote of quotes(); track quote.id) {
+        <li class="quote-card">
+          <blockquote>{{ quote.text }}</blockquote>
+          <p class="quote-author">
+            <a [routerLink]="['/quotes', quote.id]">— {{ quote.author }}</a>
+          </p>
+          @if (quote.tags) {
+            <p class="quote-tags">{{ quote.tags }}</p>
+          }
+          @if (isAuthenticated()) {
+            <div class="quote-actions">
+              <a [routerLink]="['/quotes', quote.id, 'edit']">Edit</a>
+              <button type="button" (click)="deleteQuote(quote.id)">Delete</button>
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  }
+</main>

@@ -1,0 +1,20 @@
+Using launch settings from D:\thinkschool\day-18\Piece1\QuotesApi\Properties\launchSettings.json...
+Building...
+D:\thinkschool\day-18\Piece1\QuotesApi\QuotesApi.csproj : warning NU1903: Package 'SQLitePCLRaw.lib.e_sqlite3' 2.1.11 has a known high severity vulnerability, https://github.com/advisories/GHSA-2m69-gcr7-jv3q
+D:\thinkschool\day-18\Piece1\QuotesApi\QuotesApi.csproj : warning NU1903: Package 'SQLitePCLRaw.lib.e_sqlite3' 2.1.11 has a known high severity vulnerability, https://github.com/advisories/GHSA-2m69-gcr7-jv3q
+[11:24:25 WRN] [TraceId:] The migration operation 'PRAGMA foreign_keys = 0;
+' from migration 'FixCollectionItemKey' cannot be executed in a transaction. If the app is terminated or an unrecoverable error occurs while this operation is being executed then the migration will be left in a partially applied state and would need to be reverted manually before it can be applied again. Create a separate migration that contains just this operation.
+[11:24:25 WRN] The migration operation 'PRAGMA foreign_keys = 0;
+' from migration 'FixCollectionItemKey' cannot be executed in a transaction. If the app is terminated or an unrecoverable error occurs while this operation is being executed then the migration will be left in a partially applied state and would need to be reverted manually before it can be applied again. Create a separate migration that contains just this operation.
+[11:24:26 INF] [TraceId:] EmailWorker started
+[11:24:26 INF] EmailWorker started
+[11:24:26 INF] [TraceId:] Now listening on: http://localhost:5299
+[11:24:26 INF] Now listening on: http://localhost:5299
+[11:24:26 INF] [TraceId:] Application started. Press Ctrl+C to shut down.
+[11:24:26 INF] Application started. Press Ctrl+C to shut down.
+[11:24:26 INF] [TraceId:] Hosting environment: Development
+[11:24:26 INF] Hosting environment: Development
+[11:24:26 INF] [TraceId:] Content root path: D:\thinkschool\day-18\Piece1\QuotesApi
+[11:24:26 INF] Content root path: D:\thinkschool\day-18\Piece1\QuotesApi
+[11:24:33 INF] [TraceId:] Processed queued email: hello from day 18
+[11:24:33 INF] Processed queued email: hello from day 18

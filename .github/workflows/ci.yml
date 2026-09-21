@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        run: dotnet restore ThinkSchool.slnx
+
+      - name: Build
+        run: dotnet build ThinkSchool.slnx --no-restore
+
+      - name: Test
+        run: dotnet test ThinkSchool.slnx --no-build --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: "**/TestResults/*.trx"
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: "**/TestResults/**/coverage.cobertura.xml"
+
+      - name: Check coverage
+        run: |
+          python - <<'PY'
+          import glob
+          import sys
+          import xml.etree.ElementTree as ET
+
+          files = glob.glob("**/TestResults/**/coverage.cobertura.xml", recursive=True)
+
+          if not files:
+              print("No coverage file found.")
+              sys.exit(1)
+
+          total = 0
+          covered = 0
+
+          for file in files:
+              root = ET.parse(file).getroot()
+
+              for line in root.findall(".//line"):
+                  total += 1
+                  if int(line.get("hits", "0")) > 0:
+                      covered += 1
+
+          if total == 0:
+              print("No executable lines found in coverage.")
+              sys.exit(1)
+
+          percentage = covered / total * 100
+
+          print(f"Coverage: {percentage:.2f}%")
+          print("Required: 70.00%")
+
+          if percentage < 70:
+              print("Coverage is below 70%. Failing CI.")
+              sys.exit(1)
+
+          print("Coverage requirement passed.")
+          PY

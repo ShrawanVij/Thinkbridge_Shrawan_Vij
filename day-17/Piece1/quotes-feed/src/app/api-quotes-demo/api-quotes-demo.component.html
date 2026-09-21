@@ -1,0 +1,28 @@
+<section aria-labelledby="api-demo-heading">
+  <h2 id="api-demo-heading">HttpClient + interceptors demo (GET /api/quotes)</h2>
+
+  <div class="controls">
+    <label>
+      Page
+      <input type="number" [value]="page()" (change)="goToPage(+$any($event.target).value)" min="0" />
+    </label>
+    <button type="button" (click)="load()">Reload</button>
+  </div>
+
+  @if (loading()) {
+    <p class="state loading" role="status">Loading quotes...</p>
+  } @else if (error()) {
+    <p class="state error" role="alert">{{ error()!.friendlyMessage }} (status {{ error()!.status }})</p>
+  } @else if (quotes() && quotes()!.length === 0) {
+    <p class="state empty">No quotes on this page.</p>
+  } @else if (quotes()) {
+    <ul class="quote-list">
+      @for (quote of quotes(); track quote.id) {
+        <li>
+          <span class="quote-text">&ldquo;{{ quote.text }}&rdquo;</span>
+          <span class="quote-author">&mdash; {{ quote.author }}</span>
+        </li>
+      }
+    </ul>
+  }
+</section>

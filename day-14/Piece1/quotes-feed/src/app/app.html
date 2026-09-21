@@ -1,0 +1,15 @@
+<div class="page-shell">
+  <header class="page-header">
+    <h1>Quotes</h1>
+    <p class="subtitle">Live from the Week-1 API</p>
+  </header>
+
+  @if (authService.isAuthenticated()) {
+    <p class="account-status">Logged in as {{ authService.email() }}</p>
+    <app-create-quote-form />
+  } @else {
+    <app-login-form />
+  }
+
+  <app-quote-feed />
+</div>

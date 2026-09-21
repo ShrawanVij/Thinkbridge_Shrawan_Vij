@@ -1,0 +1,45 @@
+<form novalidate (submit)="$event.preventDefault(); onSubmit()">
+  <h2>Log in to add a quote</h2>
+
+  @if (serverError()) {
+    <p class="form-error" role="alert">{{ serverError() }}</p>
+  }
+
+  <div class="field">
+    <label for="login-email">Email</label>
+    <input
+      id="login-email"
+      type="email"
+      autocomplete="username"
+      [formField]="loginForm.email"
+      [attr.aria-invalid]="loginForm.email().touched() && loginForm.email().invalid() ? true : null"
+      [attr.aria-describedby]="loginForm.email().touched() && loginForm.email().invalid() ? 'login-email-error' : null"
+    />
+    @if (loginForm.email().touched() && loginForm.email().invalid()) {
+      <p id="login-email-error" class="field-error" role="alert">
+        {{ loginForm.email().errors()[0].message }}
+      </p>
+    }
+  </div>
+
+  <div class="field">
+    <label for="login-password">Password</label>
+    <input
+      id="login-password"
+      type="password"
+      autocomplete="current-password"
+      [formField]="loginForm.password"
+      [attr.aria-invalid]="loginForm.password().touched() && loginForm.password().invalid() ? true : null"
+      [attr.aria-describedby]="loginForm.password().touched() && loginForm.password().invalid() ? 'login-password-error' : null"
+    />
+    @if (loginForm.password().touched() && loginForm.password().invalid()) {
+      <p id="login-password-error" class="field-error" role="alert">
+        {{ loginForm.password().errors()[0].message }}
+      </p>
+    }
+  </div>
+
+  <button type="submit" [disabled]="loginForm().submitting()">
+    {{ loginForm().submitting() ? 'Logging in...' : 'Log in' }}
+  </button>
+</form>

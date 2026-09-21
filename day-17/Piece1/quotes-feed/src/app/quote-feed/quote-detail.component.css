@@ -1,0 +1,67 @@
+:host {
+  display: block;
+  position: sticky;
+  top: 24px;
+}
+
+.state-message {
+  text-align: center;
+  color: #635a75;
+  padding: 24px;
+  font-size: 0.95rem;
+}
+
+.state-error {
+  color: #b03a5b;
+}
+
+.detail-card {
+  background: #faf9fc;
+  border-left: 3px solid #7c5cbf;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.detail-id {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #a49bb5;
+  margin: 0 0 10px;
+}
+
+.detail-text {
+  font-size: 1.15rem;
+  line-height: 1.5;
+  margin: 0 0 12px;
+  color: #2a2438;
+}
+
+.detail-author {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #7c5cbf;
+  margin: 0;
+}
+
+.detail-date {
+  font-size: 0.8rem;
+  color: #a49bb5;
+  margin: 6px 0 0;
+}
+
+.detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.tag-chip {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #ece5f8;
+  color: #5a4a80;
+}

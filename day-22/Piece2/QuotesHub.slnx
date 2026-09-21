@@ -1,0 +1,33 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Host/">
+    <Project Path="src/Host/QuotesHub.Api/QuotesHub.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Collections/">
+    <Project Path="src/Modules/Collections/QuotesHub.Modules.Collections.Application/QuotesHub.Modules.Collections.Application.csproj" />
+    <Project Path="src/Modules/Collections/QuotesHub.Modules.Collections.Domain/QuotesHub.Modules.Collections.Domain.csproj" />
+    <Project Path="src/Modules/Collections/QuotesHub.Modules.Collections.Infrastructure/QuotesHub.Modules.Collections.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Engagement/">
+    <Project Path="src/Modules/Engagement/QuotesHub.Modules.Engagement.Application/QuotesHub.Modules.Engagement.Application.csproj" />
+    <Project Path="src/Modules/Engagement/QuotesHub.Modules.Engagement.Domain/QuotesHub.Modules.Engagement.Domain.csproj" />
+    <Project Path="src/Modules/Engagement/QuotesHub.Modules.Engagement.Infrastructure/QuotesHub.Modules.Engagement.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Identity/">
+    <Project Path="src/Modules/Identity/QuotesHub.Modules.Identity.Application/QuotesHub.Modules.Identity.Application.csproj" />
+    <Project Path="src/Modules/Identity/QuotesHub.Modules.Identity.Domain/QuotesHub.Modules.Identity.Domain.csproj" />
+    <Project Path="src/Modules/Identity/QuotesHub.Modules.Identity.Infrastructure/QuotesHub.Modules.Identity.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Quotes/">
+    <Project Path="src/Modules/Quotes/QuotesHub.Modules.Quotes.Application/QuotesHub.Modules.Quotes.Application.csproj" />
+    <Project Path="src/Modules/Quotes/QuotesHub.Modules.Quotes.Domain/QuotesHub.Modules.Quotes.Domain.csproj" />
+    <Project Path="src/Modules/Quotes/QuotesHub.Modules.Quotes.Infrastructure/QuotesHub.Modules.Quotes.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/SharedKernel/">
+    <Project Path="src/SharedKernel/QuotesHub.SharedKernel/QuotesHub.SharedKernel.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/QuotesHub.Modules.Quotes.Domain.Tests/QuotesHub.Modules.Quotes.Domain.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,35 @@
+<main class="collection-detail-page">
+  @if (loading()) {
+    <p>Loading…</p>
+  } @else if (forbidden()) {
+    <p class="error">This isn't your collection.</p>
+  } @else if (collection(); as c) {
+    <h1>{{ c.name }}</h1>
+
+    <form (ngSubmit)="addQuote()" class="add-quote-form">
+      <input
+        type="number"
+        [ngModel]="newQuoteId()"
+        (ngModelChange)="newQuoteId.set($event)"
+        name="quoteId"
+        placeholder="Quote id"
+      />
+      <button type="submit">Add quote</button>
+    </form>
+
+    @if (c.items.length === 0) {
+      <p>No quotes in this collection yet.</p>
+    } @else {
+      <ul>
+        @for (item of c.items; track item.quoteId) {
+          <li>
+            <a [routerLink]="['/quotes', item.quoteId]">Quote #{{ item.quoteId }}</a>
+            <button type="button" (click)="removeQuote(item.quoteId)">Remove</button>
+          </li>
+        }
+      </ul>
+    }
+  } @else {
+    <p>Collection not found.</p>
+  }
+</main>

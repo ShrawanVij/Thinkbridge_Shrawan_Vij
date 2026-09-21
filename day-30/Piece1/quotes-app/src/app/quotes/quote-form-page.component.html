@@ -1,0 +1,23 @@
+<main class="form-page">
+  <h1>{{ isEditMode ? 'Edit quote' : 'New quote' }}</h1>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <label>
+      Author
+      <input type="text" formControlName="author" maxlength="100" />
+    </label>
+
+    <label>
+      Text
+      <textarea formControlName="text" maxlength="1000" rows="4"></textarea>
+    </label>
+
+    @if (errorMessage()) {
+      <p class="error" role="alert">{{ errorMessage() }}</p>
+    }
+
+    <button type="submit" [disabled]="submitting()">
+      {{ submitting() ? 'Saving…' : 'Save' }}
+    </button>
+  </form>
+</main>

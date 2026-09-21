@@ -1,0 +1,45 @@
+<form novalidate (submit)="$event.preventDefault(); onSubmit()">
+  <h2 #heading tabindex="-1">Add a quote</h2>
+
+  @if (serverError()) {
+    <p class="form-error" role="alert">{{ serverError() }}</p>
+  }
+
+  <p class="success-message" role="status" aria-live="polite">{{ successMessage() }}</p>
+
+  <div class="field">
+    <label for="quote-author">Author</label>
+    <input
+      id="quote-author"
+      type="text"
+      [formField]="quoteForm.author"
+      [attr.aria-invalid]="quoteForm.author().touched() && quoteForm.author().invalid() ? true : null"
+      [attr.aria-describedby]="quoteForm.author().touched() && quoteForm.author().invalid() ? 'quote-author-error' : null"
+    />
+    @if (quoteForm.author().touched() && quoteForm.author().invalid()) {
+      <p id="quote-author-error" class="field-error" role="alert">
+        {{ quoteForm.author().errors()[0].message }}
+      </p>
+    }
+  </div>
+
+  <div class="field">
+    <label for="quote-text">Quote text</label>
+    <textarea
+      id="quote-text"
+      rows="4"
+      [formField]="quoteForm.text"
+      [attr.aria-invalid]="quoteForm.text().touched() && quoteForm.text().invalid() ? true : null"
+      [attr.aria-describedby]="quoteForm.text().touched() && quoteForm.text().invalid() ? 'quote-text-error' : null"
+    ></textarea>
+    @if (quoteForm.text().touched() && quoteForm.text().invalid()) {
+      <p id="quote-text-error" class="field-error" role="alert">
+        {{ quoteForm.text().errors()[0].message }}
+      </p>
+    }
+  </div>
+
+  <button type="submit" [disabled]="quoteForm().submitting()">
+    {{ quoteForm().submitting() ? 'Adding quote...' : 'Add quote' }}
+  </button>
+</form>

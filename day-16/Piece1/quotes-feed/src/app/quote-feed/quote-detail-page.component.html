@@ -1,0 +1,8 @@
+<div class="detail-page">
+  <a routerLink="/" class="back-link">&larr; Back to quotes</a>
+  @if (quoteId() === null) {
+    <p class="state-message state-error">Invalid quote id in the URL.</p>
+  } @else {
+    <app-quote-detail [quoteId]="quoteId()" />
+  }
+</div>

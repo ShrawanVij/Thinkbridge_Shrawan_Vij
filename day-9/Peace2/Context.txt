@@ -1,0 +1,102 @@
+// REPRO - two sessions lock OrderId 100 and 200 in opposite order
+
+Session A:
+BEGIN TRAN;
+UPDATE dbo.Orders SET Amount = Amount + 1 WHERE OrderId = 100;
+WAITFOR DELAY '00:00:03';
+UPDATE dbo.Orders SET Amount = Amount + 1 WHERE OrderId = 200;
+COMMIT;
+
+Session B:
+BEGIN TRAN;
+UPDATE dbo.Orders SET Amount = Amount + 1 WHERE OrderId = 200;
+WAITFOR DELAY '00:00:03';
+UPDATE dbo.Orders SET Amount = Amount + 1 WHERE OrderId = 100;
+COMMIT;
+
+
+// sqlcmd output when both ran at the same time
+
+Session A:
+Changed database context to 'Day8Indexes'.
+Session A: locking OrderId=100
+Session A: now trying to lock OrderId=200 (Session B holds it)
+Msg 1205, Level 13, State 51, Server e299d6d5ec38, Line 8
+Transaction (Process ID 55) was deadlocked on lock resources with another process and has been chosen as the deadlock victim. Rerun the transaction.
+
+Session B:
+Changed database context to 'Day8Indexes'.
+Session B: locking OrderId=200
+Session B: now trying to lock OrderId=100 (Session A holds it)
+Session B: got both locks, committing
+
+
+
+
+
+
+
+
+// deadlock graph, pulled from the SQL Server error log (trace flag 1222)
+// trimmed - the raw log also has binary stack frame addresses that arent useful here
+
+2026-08-19 07:14:01.93 spid10s deadlock-list
+2026-08-19 07:14:01.93 spid10s  deadlock victim=processd8046aca8
+
+process id=processd8046aca8 spid=55 isolationlevel=read committed (2) currentdbname=Day8Indexes
+  waitresource=KEY: 5:72057594045792256 lockMode=U
+  inputbuf: UPDATE dbo.Orders SET Amount = Amount + 1 WHERE OrderId = 200
+
+process id=processd94e90108 spid=56 isolationlevel=read committed (2) currentdbname=Day8Indexes
+  waitresource=KEY: 5:72057594045792256 lockMode=U
+  inputbuf: UPDATE dbo.Orders SET Amount = Amount + 1 WHERE OrderId = 100
+
+resource-list
+  keylock (row for OrderId=200) owner=processd94e90108 (spid 56) mode=X, waiter=processd8046aca8 (spid 55) mode=U
+  keylock (row for OrderId=100) owner=processd8046aca8 (spid 55) mode=X, waiter=processd94e90108 (spid 56) mode=U
+
+
+
+
+
+
+
+// FIX - both sessions lock in the same order (OrderId 100 first, then 200)
+
+Session A (fixed):
+BEGIN TRAN;
+UPDATE dbo.Orders SET Amount = Amount + 1 WHERE OrderId = 100;
+WAITFOR DELAY '00:00:03';
+UPDATE dbo.Orders SET Amount = Amount + 1 WHERE OrderId = 200;
+COMMIT;
+
+Session B (fixed):
+BEGIN TRAN;
+UPDATE dbo.Orders SET Amount = Amount + 1 WHERE OrderId = 100;
+WAITFOR DELAY '00:00:03';
+UPDATE dbo.Orders SET Amount = Amount + 1 WHERE OrderId = 200;
+COMMIT;
+
+
+// actual output after the fix - both ran clean, no error
+
+Session A (fixed):
+Changed database context to 'Day8Indexes'.
+Session A (fixed): locking OrderId=100 first
+Session A (fixed): locking OrderId=200 second
+Session A (fixed): committing
+
+Session B (fixed):
+Changed database context to 'Day8Indexes'.
+Session B (fixed): locking OrderId=100 first
+Session B (fixed): locking OrderId=200 second
+Session B (fixed): committing
+
+
+
+
+
+
+// why it works, one line
+
+A deadlock needs a cycle of waits - if every transaction locks rows in the same order, whoever gets there first just makes the other one wait normally instead of the two waiting on each other, so a cycle can never form

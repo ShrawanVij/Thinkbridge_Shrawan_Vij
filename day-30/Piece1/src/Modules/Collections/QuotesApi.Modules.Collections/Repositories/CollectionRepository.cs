@@ -1,0 +1,48 @@
+using Microsoft.EntityFrameworkCore;
+using QuotesApi.Modules.Collections.Data;
+using QuotesApi.Modules.Collections.Models;
+
+namespace QuotesApi.Modules.Collections.Repositories;
+
+public class CollectionRepository : ICollectionRepository
+{
+    private readonly CollectionsDbContext _db;
+
+    public CollectionRepository(CollectionsDbContext db)
+    {
+        _db = db;
+    }
+
+    public async Task<Collection?> GetById(int id, CancellationToken cancellationToken)
+    {
+        return await _db.Collections
+            .Include(c => c.Items)
+            .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+    }
+
+    public async Task<List<Collection>> GetByOwnerId(int ownerId, CancellationToken cancellationToken)
+    {
+        return await _db.Collections
+            .Include(c => c.Items)
+            .Where(c => c.OwnerId == ownerId)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task Add(Collection collection, CancellationToken cancellationToken)
+    {
+        await _db.Collections.AddAsync(collection, cancellationToken);
+        await _db.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task Update(Collection collection, CancellationToken cancellationToken)
+    {
+        _db.Collections.Update(collection);
+        await _db.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task Delete(Collection collection, CancellationToken cancellationToken)
+    {
+        _db.Collections.Remove(collection);
+        await _db.SaveChangesAsync(cancellationToken);
+    }
+}

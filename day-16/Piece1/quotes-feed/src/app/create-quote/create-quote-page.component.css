@@ -1,0 +1,18 @@
+.account-status {
+  max-width: 480px;
+  margin: 0 auto 12px;
+  font-size: 0.85rem;
+  color: #6a6178;
+  text-align: right;
+}
+
+.forms-comparison {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+}
+
+.forms-comparison > * {
+  margin: 0 0 32px;
+}

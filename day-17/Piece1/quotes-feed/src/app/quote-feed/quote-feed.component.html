@@ -1,0 +1,74 @@
+<div class="search-bar">
+  <input
+    type="text"
+    placeholder="Filter by author..."
+    [value]="searchTerm()"
+    (input)="onSearchChange($any($event.target).value)"
+  />
+
+  <select
+    class="control-select"
+    aria-label="Quotes per page"
+    [value]="pageSize() === null ? 'all' : pageSize()"
+    (change)="onPageSizeChange($any($event.target).value)"
+  >
+    <option value="10">10 quotes</option>
+    <option value="20">20 quotes</option>
+    <option value="50">50 quotes</option>
+    <option value="100">100 quotes</option>
+    <option value="all">All quotes</option>
+  </select>
+
+  <select
+    class="control-select"
+    aria-label="Sort order"
+    [value]="sortOrder()"
+    (change)="onSortOrderChange($any($event.target).value)"
+  >
+    <option value="newest">Newest first</option>
+    <option value="oldest">Oldest first</option>
+    <option value="author">Author (A-Z)</option>
+  </select>
+</div>
+
+@if (availableAuthors().length) {
+  <div class="author-chips">
+    @for (author of availableAuthors(); track author) {
+      <button
+        type="button"
+        class="chip"
+        [class.chip-active]="searchTerm() === author"
+        (click)="selectAuthor(author)"
+      >
+        {{ author }}
+      </button>
+    }
+  </div>
+}
+
+@if (loading()) {
+  <p class="state-message">Loading quotes...</p>
+} @else if (error()) {
+  <p class="state-message state-error">Could not load quotes from the API.</p>
+} @else {
+  <p class="result-count">{{ filteredQuotes().length }} of {{ quotes().length }} quotes</p>
+
+  <div class="quote-grid">
+    @for (quote of filteredQuotes(); track quote.id) {
+      <a class="quote-card" [routerLink]="['/quotes', quote.id]">
+        <p class="quote-text">&ldquo;{{ quote.text }}&rdquo;</p>
+        <p class="quote-author">&mdash; {{ quote.author }}</p>
+        <p class="quote-date">{{ quote.createdAt | date: 'mediumDate' }}</p>
+        <button
+          type="button"
+          class="quote-delete"
+          (click)="$event.preventDefault(); $event.stopPropagation(); onDelete(quote.id)"
+        >
+          Delete
+        </button>
+      </a>
+    } @empty {
+      <p class="state-message">No quotes match "{{ searchTerm() }}".</p>
+    }
+  </div>
+}

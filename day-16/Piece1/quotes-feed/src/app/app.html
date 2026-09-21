@@ -1,0 +1,18 @@
+<div class="page-shell">
+  <header class="page-header">
+    <h1>Quotes</h1>
+    <p class="subtitle">Live from the Week-1 API</p>
+
+    <nav class="main-nav">
+      <a routerLink="/" routerLinkActive="nav-active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+      @if (authService.isAuthenticated()) {
+        <a routerLink="/create" routerLinkActive="nav-active">Add a quote</a>
+        <span class="account-status">Logged in as {{ authService.email() }}</span>
+      } @else {
+        <a routerLink="/login" routerLinkActive="nav-active">Log in</a>
+      }
+    </nav>
+  </header>
+
+  <router-outlet />
+</div>

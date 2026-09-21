@@ -1,0 +1,49 @@
+<form novalidate [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2>Add a quote (Reactive Forms)</h2>
+
+  @if (serverError()) {
+    <p class="form-error" role="alert">{{ serverError() }}</p>
+  }
+
+  <p class="success-message" role="status" aria-live="polite">{{ successMessage() }}</p>
+
+  <div class="field">
+    <label for="quote-author-reactive">Author</label>
+    <input
+      #authorInput
+      id="quote-author-reactive"
+      type="text"
+      formControlName="author"
+      maxlength="100"
+      [attr.aria-invalid]="form.controls.author.touched && form.controls.author.invalid ? true : null"
+      [attr.aria-describedby]="form.controls.author.touched && form.controls.author.invalid ? 'quote-author-reactive-error' : null"
+    />
+    @if (form.controls.author.touched && form.controls.author.invalid) {
+      <p id="quote-author-reactive-error" class="field-error" role="alert">
+        {{ authorErrorMessage() }}
+      </p>
+    }
+  </div>
+
+  <div class="field">
+    <label for="quote-text-reactive">Quote text</label>
+    <textarea
+      #textInput
+      id="quote-text-reactive"
+      rows="4"
+      formControlName="text"
+      maxlength="1000"
+      [attr.aria-invalid]="form.controls.text.touched && form.controls.text.invalid ? true : null"
+      [attr.aria-describedby]="form.controls.text.touched && form.controls.text.invalid ? 'quote-text-reactive-error' : null"
+    ></textarea>
+    @if (form.controls.text.touched && form.controls.text.invalid) {
+      <p id="quote-text-reactive-error" class="field-error" role="alert">
+        {{ textErrorMessage() }}
+      </p>
+    }
+  </div>
+
+  <button type="submit" [disabled]="submitting()">
+    {{ submitting() ? 'Adding quote...' : 'Add quote' }}
+  </button>
+</form>

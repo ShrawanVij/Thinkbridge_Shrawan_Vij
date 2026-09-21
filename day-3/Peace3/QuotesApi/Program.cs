@@ -10,8 +10,18 @@ using System.Text;
 using QuotesApi.Models;
 using QuotesApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
+using Serilog;
+using Serilog.Context;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.Services.AddInfrastructure();
 builder.Services.AddScoped<ICollectionRepository, CollectionRepository>();
@@ -62,6 +72,14 @@ builder.Services.AddScoped<IAuthorizationHandler,
     CanDeleteOwnQuoteHandler>();
 
 var app = builder.Build();
+
+app.Use(async (ctx, next) =>
+{
+    using (LogContext.PushProperty("TraceId", ctx.TraceIdentifier))
+    {
+        await next();
+    }
+});
 
 app.UseAuthentication();
 app.UseAuthorization();

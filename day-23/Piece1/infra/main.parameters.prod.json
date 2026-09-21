@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": { "value": "prod" },
+    "location": { "value": "centralindia" },
+    "containerAppsEnvironmentResourceId": {
+      "value": "/subscriptions/${AZURE_SUBSCRIPTION_ID}/resourceGroups/thinkschool-rg/providers/Microsoft.App/managedEnvironments/thinkschool-env"
+    },
+    "apiImage": { "value": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest" },
+    "apiMinReplicas": { "value": 2 },
+    "apiMaxReplicas": { "value": 10 },
+    "apiCpu": { "value": "1.0" },
+    "apiMemory": { "value": "2.0Gi" },
+    "sqlAdminLogin": { "value": "quotesadmin" },
+    "sqlSkuName": { "value": "S1" },
+    "sqlSkuTier": { "value": "Standard" },
+    "sqlMaxSizeBytes": { "value": 10737418240 },
+    "serviceBusSkuName": { "value": "Standard" }
+  }
+}

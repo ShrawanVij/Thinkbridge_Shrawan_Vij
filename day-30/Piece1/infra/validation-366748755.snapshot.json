@@ -1,0 +1,305 @@
+{
+  "predictedResources": [
+    {
+      "id": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev",
+      "type": "Microsoft.Resources/resourceGroups",
+      "name": "rg-quotes-dev",
+      "apiVersion": "2021-04-01",
+      "location": "centralindia",
+      "tags": {
+        "azd-env-name": "dev"
+      }
+    },
+    {
+      "id": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev",
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "name": "id-quotes-dev",
+      "apiVersion": "2023-01-31",
+      "location": "centralindia"
+    },
+    {
+      "id": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.KeyVault/vaults/kv-quotes-dev",
+      "type": "Microsoft.KeyVault/vaults",
+      "name": "kv-quotes-dev",
+      "apiVersion": "2023-07-01",
+      "location": "centralindia",
+      "properties": {
+        "tenantId": "[tenant().tenantId]",
+        "sku": {
+          "family": "A",
+          "name": "standard"
+        },
+        "enableRbacAuthorization": true,
+        "enableSoftDelete": true
+      }
+    },
+    {
+      "id": "[extensionResourceId('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.KeyVault/vaults/kv-quotes-dev', 'Microsoft.Authorization/roleAssignments', guid('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.KeyVault/vaults/kv-quotes-dev', reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev', '2023-01-31').principalId, '4633458b-17de-408a-b874-0445c86b69e6'))]",
+      "type": "Microsoft.Authorization/roleAssignments",
+      "name": "[guid('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.KeyVault/vaults/kv-quotes-dev', reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev', '2023-01-31').principalId, '4633458b-17de-408a-b874-0445c86b69e6')]",
+      "apiVersion": "2022-04-01",
+      "properties": {
+        "principalId": "[reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev', '2023-01-31').principalId]",
+        "principalType": "ServicePrincipal",
+        "roleDefinitionId": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/providers/Microsoft.Authorization/roleDefinitions/4633458b-17de-408a-b874-0445c86b69e6"
+      }
+    },
+    {
+      "id": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.Sql/servers/sql-quotes-dev-4oelx5lir7boe",
+      "type": "Microsoft.Sql/servers",
+      "name": "sql-quotes-dev-4oelx5lir7boe",
+      "apiVersion": "2023-08-01-preview",
+      "location": "centralindia",
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev": {}
+        }
+      },
+      "properties": {
+        "version": "12.0",
+        "primaryUserAssignedIdentityId": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev",
+        "administrators": {
+          "administratorType": "ActiveDirectory",
+          "principalType": "Application",
+          "login": "id-quotes-dev",
+          "sid": "[reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev', '2023-01-31').principalId]",
+          "tenantId": "[tenant().tenantId]",
+          "azureADOnlyAuthentication": true
+        }
+      }
+    },
+    {
+      "id": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.Sql/servers/sql-quotes-dev-4oelx5lir7boe/databases/quotesdb",
+      "type": "Microsoft.Sql/servers/databases",
+      "name": "sql-quotes-dev-4oelx5lir7boe/quotesdb",
+      "apiVersion": "2023-08-01-preview",
+      "location": "centralindia",
+      "sku": {
+        "name": "Basic",
+        "tier": "Basic"
+      },
+      "properties": {
+        "maxSizeBytes": 2147483648
+      }
+    },
+    {
+      "id": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.Sql/servers/sql-quotes-dev-4oelx5lir7boe/databases/identitydb",
+      "type": "Microsoft.Sql/servers/databases",
+      "name": "sql-quotes-dev-4oelx5lir7boe/identitydb",
+      "apiVersion": "2023-08-01-preview",
+      "location": "centralindia",
+      "sku": {
+        "name": "Basic",
+        "tier": "Basic"
+      },
+      "properties": {
+        "maxSizeBytes": 2147483648
+      }
+    },
+    {
+      "id": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.Sql/servers/sql-quotes-dev-4oelx5lir7boe/databases/collectionsdb",
+      "type": "Microsoft.Sql/servers/databases",
+      "name": "sql-quotes-dev-4oelx5lir7boe/collectionsdb",
+      "apiVersion": "2023-08-01-preview",
+      "location": "centralindia",
+      "sku": {
+        "name": "Basic",
+        "tier": "Basic"
+      },
+      "properties": {
+        "maxSizeBytes": 2147483648
+      }
+    },
+    {
+      "id": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.Sql/servers/sql-quotes-dev-4oelx5lir7boe/databases/engagementdb",
+      "type": "Microsoft.Sql/servers/databases",
+      "name": "sql-quotes-dev-4oelx5lir7boe/engagementdb",
+      "apiVersion": "2023-08-01-preview",
+      "location": "centralindia",
+      "sku": {
+        "name": "Basic",
+        "tier": "Basic"
+      },
+      "properties": {
+        "maxSizeBytes": 2147483648
+      }
+    },
+    {
+      "id": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.Sql/servers/sql-quotes-dev-4oelx5lir7boe/firewallRules/AllowAllAzureServices",
+      "type": "Microsoft.Sql/servers/firewallRules",
+      "name": "sql-quotes-dev-4oelx5lir7boe/AllowAllAzureServices",
+      "apiVersion": "2023-08-01-preview",
+      "properties": {
+        "startIpAddress": "0.0.0.0",
+        "endIpAddress": "0.0.0.0"
+      }
+    },
+    {
+      "id": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ServiceBus/namespaces/sb-quotes-dev",
+      "type": "Microsoft.ServiceBus/namespaces",
+      "name": "sb-quotes-dev",
+      "apiVersion": "2022-10-01-preview",
+      "location": "centralindia",
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard"
+      },
+      "properties": {
+        "disableLocalAuth": true,
+        "minimumTlsVersion": "1.2"
+      }
+    },
+    {
+      "id": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ServiceBus/namespaces/sb-quotes-dev/topics/quote-events",
+      "type": "Microsoft.ServiceBus/namespaces/topics",
+      "name": "sb-quotes-dev/quote-events",
+      "apiVersion": "2022-10-01-preview"
+    },
+    {
+      "id": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ServiceBus/namespaces/sb-quotes-dev/topics/quote-events/subscriptions/notify-sub",
+      "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
+      "name": "sb-quotes-dev/quote-events/notify-sub",
+      "apiVersion": "2022-10-01-preview",
+      "properties": {
+        "maxDeliveryCount": 10
+      }
+    },
+    {
+      "id": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ServiceBus/namespaces/sb-quotes-dev/topics/quote-events/subscriptions/audit-sub",
+      "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
+      "name": "sb-quotes-dev/quote-events/audit-sub",
+      "apiVersion": "2022-10-01-preview",
+      "properties": {
+        "maxDeliveryCount": 10
+      }
+    },
+    {
+      "id": "[extensionResourceId('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ServiceBus/namespaces/sb-quotes-dev', 'Microsoft.Authorization/roleAssignments', guid('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ServiceBus/namespaces/sb-quotes-dev', reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev', '2023-01-31').principalId, '69a216fc-b8fb-44d8-bc22-1f3c2cd27a39'))]",
+      "type": "Microsoft.Authorization/roleAssignments",
+      "name": "[guid('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ServiceBus/namespaces/sb-quotes-dev', reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev', '2023-01-31').principalId, '69a216fc-b8fb-44d8-bc22-1f3c2cd27a39')]",
+      "apiVersion": "2022-04-01",
+      "properties": {
+        "principalId": "[reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev', '2023-01-31').principalId]",
+        "principalType": "ServicePrincipal",
+        "roleDefinitionId": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/providers/Microsoft.Authorization/roleDefinitions/69a216fc-b8fb-44d8-bc22-1f3c2cd27a39"
+      }
+    },
+    {
+      "id": "[extensionResourceId('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ServiceBus/namespaces/sb-quotes-dev', 'Microsoft.Authorization/roleAssignments', guid('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ServiceBus/namespaces/sb-quotes-dev', reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev', '2023-01-31').principalId, '4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0'))]",
+      "type": "Microsoft.Authorization/roleAssignments",
+      "name": "[guid('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ServiceBus/namespaces/sb-quotes-dev', reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev', '2023-01-31').principalId, '4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0')]",
+      "apiVersion": "2022-04-01",
+      "properties": {
+        "principalId": "[reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev', '2023-01-31').principalId]",
+        "principalType": "ServicePrincipal",
+        "roleDefinitionId": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/providers/Microsoft.Authorization/roleDefinitions/4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0"
+      }
+    },
+    {
+      "id": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.App/containerApps/quotes-api-dev",
+      "type": "Microsoft.App/containerApps",
+      "name": "quotes-api-dev",
+      "apiVersion": "2024-03-01",
+      "location": "centralindia",
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev": {}
+        }
+      },
+      "properties": {
+        "environmentId": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/thinkschool-rg/providers/Microsoft.App/managedEnvironments/thinkschool-env",
+        "configuration": {
+          "ingress": {
+            "external": true,
+            "targetPort": 8080
+          },
+          "secrets": [
+            {
+              "name": "jwt-signing-key",
+              "keyVaultUrl": "[format('{0}secrets/{1}', reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.KeyVault/vaults/kv-quotes-dev', '2023-07-01').vaultUri, 'jwt-signing-key')]",
+              "identity": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev"
+            }
+          ]
+        },
+        "template": {
+          "containers": [
+            {
+              "name": "quotes-api",
+              "image": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest",
+              "resources": {
+                "cpu": 0.25,
+                "memory": "0.5Gi"
+              },
+              "env": [
+                {
+                  "name": "ConnectionStrings__Quotes",
+                  "value": "[format('Server=tcp:{0},1433;Database={1};Authentication=Active Directory Managed Identity;User Id={2};Encrypt=True;TrustServerCertificate=False;', reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.Sql/servers/sql-quotes-dev-4oelx5lir7boe', '2023-08-01-preview').fullyQualifiedDomainName, 'quotesdb', reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev', '2023-01-31').clientId)]"
+                },
+                {
+                  "name": "ConnectionStrings__Identity",
+                  "value": "[format('Server=tcp:{0},1433;Database={1};Authentication=Active Directory Managed Identity;User Id={2};Encrypt=True;TrustServerCertificate=False;', reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.Sql/servers/sql-quotes-dev-4oelx5lir7boe', '2023-08-01-preview').fullyQualifiedDomainName, 'identitydb', reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev', '2023-01-31').clientId)]"
+                },
+                {
+                  "name": "ConnectionStrings__Collections",
+                  "value": "[format('Server=tcp:{0},1433;Database={1};Authentication=Active Directory Managed Identity;User Id={2};Encrypt=True;TrustServerCertificate=False;', reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.Sql/servers/sql-quotes-dev-4oelx5lir7boe', '2023-08-01-preview').fullyQualifiedDomainName, 'collectionsdb', reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev', '2023-01-31').clientId)]"
+                },
+                {
+                  "name": "ConnectionStrings__Engagement",
+                  "value": "[format('Server=tcp:{0},1433;Database={1};Authentication=Active Directory Managed Identity;User Id={2};Encrypt=True;TrustServerCertificate=False;', reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.Sql/servers/sql-quotes-dev-4oelx5lir7boe', '2023-08-01-preview').fullyQualifiedDomainName, 'engagementdb', reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev', '2023-01-31').clientId)]"
+                },
+                {
+                  "name": "ServiceBus__Namespace",
+                  "value": "sb-quotes-dev.servicebus.windows.net"
+                },
+                {
+                  "name": "AZURE_CLIENT_ID",
+                  "value": "[reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-quotes-dev', '2023-01-31').clientId]"
+                },
+                {
+                  "name": "Jwt__Key",
+                  "secretRef": "jwt-signing-key"
+                }
+              ]
+            }
+          ],
+          "scale": {
+            "minReplicas": 0,
+            "maxReplicas": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.App/containerApps/quotes-api-dev/authConfigs/current",
+      "type": "Microsoft.App/containerApps/authConfigs",
+      "name": "quotes-api-dev/current",
+      "apiVersion": "2024-03-01",
+      "properties": {
+        "platform": {
+          "enabled": true
+        },
+        "globalValidation": {
+          "unauthenticatedClientAction": "Return401"
+        },
+        "identityProviders": {
+          "azureActiveDirectory": {
+            "enabled": true,
+            "registration": {
+              "clientId": "9ec5db29-9812-43ac-9d81-8817e84b6cd0",
+              "openIdIssuer": "[format('{0}{1}/v2.0', environment().authentication.loginEndpoint, tenant().tenantId)]"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "diagnostics": [],
+  "outputs": {
+    "SERVICE_BUS_HOST_NAME": "sb-quotes-dev.servicebus.windows.net",
+    "SQL_SERVER_FQDN": "[reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.Sql/servers/sql-quotes-dev-4oelx5lir7boe', '2023-08-01-preview').fullyQualifiedDomainName]",
+    "KEY_VAULT_URI": "[reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.KeyVault/vaults/kv-quotes-dev', '2023-07-01').vaultUri]",
+    "API_FQDN": "[reference('/subscriptions/5448e1e9-8c94-4d57-ac78-37733af38ee8/resourceGroups/rg-quotes-dev/providers/Microsoft.App/containerApps/quotes-api-dev', '2024-03-01').configuration.ingress.fqdn]"
+  }
+}

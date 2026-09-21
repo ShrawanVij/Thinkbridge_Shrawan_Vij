@@ -1,0 +1,21 @@
+@if (quoteId() === null) {
+  <p class="state-message">Select a quote to see its detail.</p>
+} @else if (loading()) {
+  <p class="state-message">Loading detail...</p>
+} @else if (error()) {
+  <p class="state-message state-error">Could not load this quote.</p>
+} @else if (quote()) {
+  <article class="detail-card">
+    <p class="detail-id">Quote #{{ quote()!.id }}</p>
+    <p class="detail-text">&ldquo;{{ quote()!.text }}&rdquo;</p>
+    <p class="detail-author">&mdash; {{ quote()!.author }}</p>
+    <p class="detail-date">{{ quote()!.createdAt | date: 'mediumDate' }}</p>
+    @if (quote()!.tags.length) {
+      <div class="detail-tags">
+        @for (tag of quote()!.tags; track tag.id) {
+          <span class="tag-chip">{{ tag.name }}</span>
+        }
+      </div>
+    }
+  </article>
+}
