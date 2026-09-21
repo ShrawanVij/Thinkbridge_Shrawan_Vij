@@ -77,7 +77,7 @@ browser click-through was **not** done — there's no headed browser available i
 drive one, so the curl/CORS check and the backend's own direct-curl verification are what stand
 in for it. Say so rather than claim a click-through that didn't happen.
 
-## Infra: Bicep updated, provisioned, and verified live
+## Infra: Bicep updated, not run
 
 Based on Day 25's shape (managed identity, AAD-only SQL, Key Vault-referenced JWT secret,
 `disableLocalAuth` Service Bus) — extended, not replaced:
@@ -104,47 +104,18 @@ local emulator. (Getting there hit one real Azure SDK issue: `Azure.Core` 1.60.0
 copies of `Azure.Identity`'s credential types, colliding with them by name — resolved by aliasing
 the `Azure.Core` package reference so unqualified code only sees `Azure.Identity`'s.)
 
-**The cost trade-off, decided:** four separate Basic-tier SQL databases cost roughly 4x what the
-single database before did (still cheap in absolute terms, real on a student-tier subscription).
-The alternative — one database, four schemas, one connection string — would cost the same as
-before but means the "no two modules share a database" boundary is enforced by convention again,
-not by the platform. Kept the four-database split: a bug or careless raw-SQL query in one module
-being physically unable to reach another module's tables was judged worth the ~$15/mo difference.
+**A cost trade-off worth deciding before you run this, not after:** four separate Basic-tier SQL
+databases cost roughly 4x what the single database before did (still cheap in absolute terms, but
+real on a student-tier subscription). The alternative — one database, four schemas, one
+connection string — would cost the same as before but means the "no two modules share a
+database" boundary is enforced by convention again, not by the platform. Left as your call; the
+Bicep as written takes the four-database option.
 
 `dotnet build`/`dotnet test` — all 39 tests still pass with the SQL Server provider and managed
-identity Service Bus paths added (they exercise the SQLite/emulator fallback branch locally,
-same as before). `az bicep build` on `main.bicep` — no errors.
-
-**Actually run, not just written.** `azd provision` created a fresh `rg-quotes-dev` — SQL server
-with four databases, Service Bus namespace, Key Vault, Container App, and a Container Registry
-(added mid-provisioning — the original Bicep never had one; `azd deploy` needs somewhere to push
-the image and there wasn't one). Three real provisioning bugs turned up and got fixed along the
-way, not guessed at in advance:
-
-- `MissingPrimaryIdentity` — a SQL server with a user-assigned identity has to name which one is
-  primary explicitly (`primaryUserAssignedIdentityId`); it doesn't infer this from having only one.
-- `NameAlreadyExists` on `sql-quotes-dev.database.windows.net` — SQL logical server names are
-  globally unique across all of Azure, not just this subscription; someone else already holds the
-  plain name. Fixed the same way Day 23-25's servers ended up needing to: a `uniqueString(...)`
-  suffix on the server name only (databases inside it keep their plain names).
-- `azd deploy` failed twice more after provisioning succeeded: no Container Registry existed at
-  all (added `modules/registry.bicep`, Basic tier, admin user disabled, `AcrPull` granted to the
-  app's managed identity via Bicep; push access granted to the deploying human out-of-band, same
-  pattern as the Key Vault secret); then the Container App itself needed an `azd-service-name: api`
-  tag it never had, or `azd deploy` has no way to match it to the `api` service in `azure.yaml`.
-
-Verified live, not assumed: the deployed Container App is `Running`, serving the actual pushed
-image (not the placeholder), returns `401` on an unauthenticated request (the Entra ID auth
-config correctly gating access, not a crash), and its logs show the outbox relay successfully
-polling `OutboxMessages` on real Azure SQL over managed-identity auth every 2 seconds with no
-connection errors.
-
-**Week 5 decommissioned.** The old flat `QuotesApi`'s infra lived in `rg-quotes-prod` (single
-`quotesdb`, no module split — confirmed by inspecting it directly, not assumed) under its own
-deployment stack (`azd-stack-prod`, `denySettings.mode: denyDelete`). Torn down via
-`az stack sub delete --action-on-unmanage deleteAll`, the only safe path given the deny-delete
-setting. Confirmed gone afterward (`az group exists` → `false`); the shared `thinkschool-env`
-Container Apps Environment and unrelated resource groups (Day 5, Day 17) were untouched.
+identity Service Bus paths added (they exercise the SQLite/emulator fallback branch, same as
+before — there's no Azure SQL to test against from here). `az bicep build` on `main.bicep` — no
+errors. Actually provisioning (`azd provision`) and decommissioning the Week 5 resources: not run,
+per how we agreed to split this — real cost/quota impact on a real subscription.
 
 ## Honest gaps
 
