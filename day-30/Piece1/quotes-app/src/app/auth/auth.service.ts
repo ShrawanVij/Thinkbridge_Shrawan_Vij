@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, shareReplay, tap } from 'rxjs';
 import { AuthResponse, LoginRequest, RegisterRequest } from './auth.model';
 import { environment } from '../../environments/environment';
 
@@ -22,6 +22,12 @@ export class AuthService {
   readonly isAuthenticated = computed(() => this.accessToken() !== null);
   readonly email = computed(() => this.loggedInEmail());
 
+  // Coalesces concurrent 401s into a single refresh call -- the backend's
+  // refresh endpoint revokes the used refresh-token cookie and rotates in a
+  // new one, so two simultaneous refresh calls would make the second one
+  // look like refresh-token reuse and revoke the whole session.
+  private refreshInFlight$: Observable<AuthResponse> | null = null;
+
   constructor() {
     this.restoreSession();
   }
@@ -38,6 +44,30 @@ export class AuthService {
     return this.http
       .post<AuthResponse>(`${this.baseUrl}/api/auth/register`, request, { withCredentials: true })
       .pipe(tap((response) => this.applySession(response, request.email)));
+  }
+
+  // Silently exchanges the HttpOnly refresh-token cookie for a new access
+  // token -- called by the HTTP interceptor when a request 401s, not on a
+  // timer, so it only fires when the app actually needs a live token.
+  refresh(): Observable<AuthResponse> {
+    if (this.refreshInFlight$) {
+      return this.refreshInFlight$;
+    }
+
+    const request$ = this.http
+      .post<AuthResponse>(`${this.baseUrl}/api/auth/refresh`, {}, { withCredentials: true })
+      .pipe(
+        tap((response) => this.applySession(response, this.loggedInEmail() ?? '')),
+        shareReplay(1),
+      );
+
+    this.refreshInFlight$ = request$;
+    request$.subscribe({
+      error: () => (this.refreshInFlight$ = null),
+      complete: () => (this.refreshInFlight$ = null),
+    });
+
+    return request$;
   }
 
   logout(): void {
@@ -79,8 +109,23 @@ export class AuthService {
       return;
     }
 
-    if (!session.accessToken || Date.now() >= session.expiresAt) {
+    if (!session.accessToken) {
       this.clearSession();
+      return;
+    }
+
+    if (Date.now() >= session.expiresAt) {
+      // The access token expired, but the HttpOnly refresh-token cookie
+      // lives for 7 days -- try it before treating this as logged out.
+      // isAuthenticated() stays false until this actually succeeds, so nothing
+      // renders as logged-in on a token that's already dead.
+      this.loggedInEmail.set(session.email);
+      this.refresh().subscribe({
+        error: () => {
+          this.loggedInEmail.set(null);
+          this.clearSession();
+        },
+      });
       return;
     }
 

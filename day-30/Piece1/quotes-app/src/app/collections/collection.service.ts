@@ -21,6 +21,10 @@ export class CollectionService {
     return this.http.post<Collection>(`${this.baseUrl}/collections`, { name });
   }
 
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/collections/${id}`);
+  }
+
   addItem(collectionId: number, quoteId: number): Observable<Collection> {
     return this.http.post<Collection>(`${this.baseUrl}/collections/${collectionId}/items`, { quoteId });
   }

@@ -3,6 +3,7 @@
 
   <div class="nav-links">
     <a routerLink="/quotes">Quotes</a>
+    <a routerLink="/quotes/new">Add a quote</a>
     @if (isAuthenticated()) {
       <a routerLink="/collections">Collections</a>
       <span class="nav-email">{{ email() }}</span>

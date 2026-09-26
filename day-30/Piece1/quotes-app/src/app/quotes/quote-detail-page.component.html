@@ -2,8 +2,48 @@
   @if (loading()) {
     <p>Loading…</p>
   } @else if (quote(); as q) {
+    <button type="button" class="back-link" (click)="goBack()">← Back</button>
+    <p class="quote-id">Quote #{{ q.id }}</p>
     <blockquote>{{ q.text }}</blockquote>
     <p class="quote-author">— {{ q.author }}</p>
+
+    @if (isAuthenticated()) {
+      <section class="add-to-collection">
+        <h2>Collections</h2>
+
+        @if (collections().length === 0) {
+          <p>You don't have any collections yet. <a routerLink="/collections">Create one</a>.</p>
+        } @else {
+          @if (memberCollections().length > 0) {
+            <ul class="collection-bubbles">
+              @for (collection of memberCollections(); track collection.id) {
+                <li class="in-collection">
+                  {{ collection.name }}
+                  <button type="button" (click)="toggleCollection(collection)" [attr.aria-label]="'Remove from ' + collection.name">
+                    ×
+                  </button>
+                </li>
+              }
+            </ul>
+          } @else {
+            <p>Not in any collection yet.</p>
+          }
+
+          @if (availableCollections().length > 0) {
+            <select value="" (change)="addToCollectionById($any($event.target).value)">
+              <option value="" disabled selected>+ Add to a collection…</option>
+              @for (collection of availableCollections(); track collection.id) {
+                <option [value]="collection.id">{{ collection.name }}</option>
+              }
+            </select>
+          }
+
+          @if (addToCollectionError()) {
+            <p class="error">{{ addToCollectionError() }}</p>
+          }
+        }
+      </section>
+    }
 
     <section class="detail-tags">
       <h2>Tags</h2>

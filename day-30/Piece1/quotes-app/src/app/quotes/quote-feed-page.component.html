@@ -1,9 +1,6 @@
 <main class="feed-page">
   <header class="feed-header">
     <h1>Quotes</h1>
-    @if (isAuthenticated()) {
-      <a routerLink="/quotes/new" class="button">New quote</a>
-    }
   </header>
 
   <div class="feed-controls">
@@ -37,17 +34,24 @@
   } @else {
     <ul class="quote-list">
       @for (quote of quotes(); track quote.id) {
-        <li class="quote-card">
-          <blockquote>{{ quote.text }}</blockquote>
-          <p class="quote-author">
-            <a [routerLink]="['/quotes', quote.id]">— {{ quote.author }}</a>
-          </p>
-          @if (quote.tags) {
-            <p class="quote-tags">{{ quote.tags }}</p>
-          }
+        <li
+          class="quote-card"
+          role="link"
+          tabindex="0"
+          (click)="openQuote(quote.id)"
+          (keydown.enter)="openQuote(quote.id)"
+        >
+          <div class="quote-content">
+            <p class="quote-id">#{{ quote.id }}</p>
+            <blockquote>{{ quote.text }}</blockquote>
+            <p class="quote-author">— {{ quote.author }}</p>
+            @if (quote.tags) {
+              <p class="quote-tags">{{ quote.tags }}</p>
+            }
+          </div>
           @if (isAuthenticated()) {
-            <div class="quote-actions">
-              <a [routerLink]="['/quotes', quote.id, 'edit']">Edit</a>
+            <div class="quote-actions" (click)="$event.stopPropagation()">
+              <a [routerLink]="['/quotes', quote.id, 'edit']" class="button-outline">Edit</a>
               <button type="button" (click)="deleteQuote(quote.id)">Delete</button>
             </div>
           }

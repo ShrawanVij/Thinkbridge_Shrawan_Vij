@@ -41,4 +41,10 @@ export class CollectionsPageComponent {
       this.load();
     });
   }
+
+  delete(id: number): void {
+    if (!confirm('Delete this collection? This cannot be undone.')) return;
+
+    this.collectionService.delete(id).subscribe(() => this.load());
+  }
 }
