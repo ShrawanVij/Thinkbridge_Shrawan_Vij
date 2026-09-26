@@ -37,9 +37,6 @@
     },
     "serviceBusSkuName": {
       "value": "${SERVICE_BUS_SKU_NAME=Standard}"
-    },
-    "entraIdClientId": {
-      "value": "${ENTRA_ID_CLIENT_ID}"
     }
   }
 }

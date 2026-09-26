@@ -43,9 +43,6 @@ param serviceBusHostName string
 @description('Key Vault URI of the JWT signing secret')
 param jwtSecretUri string
 
-@description('Entra ID (Azure AD) application (client) ID used for built-in Container Apps authentication')
-param entraIdClientId string
-
 // One SQL connection string per module database — same server, same
 // managed-identity auth, different Database= only. No password anywhere:
 // Authentication=Active Directory Managed Identity resolves via the
@@ -140,29 +137,6 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
       scale: {
         minReplicas: minReplicas
         maxReplicas: maxReplicas
-      }
-    }
-  }
-}
-
-// Entra ID app auth: validates callers against the tenant's Entra ID, no custom auth secret needed.
-resource authConfig 'Microsoft.App/containerApps/authConfigs@2024-03-01' = {
-  parent: containerApp
-  name: 'current'
-  properties: {
-    platform: {
-      enabled: true
-    }
-    globalValidation: {
-      unauthenticatedClientAction: 'Return401'
-    }
-    identityProviders: {
-      azureActiveDirectory: {
-        enabled: true
-        registration: {
-          clientId: entraIdClientId
-          openIdIssuer: '${environment().authentication.loginEndpoint}${subscription().tenantId}/v2.0'
-        }
       }
     }
   }
