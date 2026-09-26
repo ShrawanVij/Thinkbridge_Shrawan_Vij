@@ -1,5 +1,4 @@
 export const environment = {
   production: true,
-  // Set at deploy time once the modular backend has a real Azure endpoint.
-  apiBaseUrl: '',
+  apiBaseUrl: 'https://quotes-api-dev.agreeablemoss-41b8d1af.centralindia.azurecontainerapps.io',
 };

@@ -56,7 +56,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AngularDev", policy =>
         policy.WithOrigins(
                 "http://localhost:4200", "http://127.0.0.1:4200", "http://localhost:4210", "http://127.0.0.1:4210",
-                "https://thankful-wave-06e439500.7.azurestaticapps.net")
+                "https://thankful-wave-06e439500.7.azurestaticapps.net",
+                "https://yellow-field-0c0e7f300.3.azurestaticapps.net")
             .AllowAnyHeader()
             .AllowAnyMethod()
             // Required so the browser stores/sends the HttpOnly refreshToken
