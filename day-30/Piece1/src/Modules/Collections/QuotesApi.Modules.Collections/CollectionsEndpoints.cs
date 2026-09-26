@@ -63,11 +63,33 @@ public static class CollectionsEndpoints
         })
         .RequireAuthorization("can-edit-collections");
 
+        app.MapDelete("/collections/{id:int}", async (
+            int id,
+            ClaimsPrincipal user,
+            ICollectionRepository repository,
+            CancellationToken cancellationToken) =>
+        {
+            if (!TryGetUserId(user, out var userId))
+                return Results.Unauthorized();
+
+            var collection = await repository.GetById(id, cancellationToken);
+            if (collection is null)
+                return Results.NotFound();
+
+            if (collection.OwnerId != userId)
+                return Results.Forbid();
+
+            await repository.Delete(collection, cancellationToken);
+            return Results.NoContent();
+        })
+        .RequireAuthorization("can-edit-collections");
+
         app.MapPost("/collections/{id:int}/items", async (
             int id,
             AddCollectionItemRequest request,
             ClaimsPrincipal user,
             ICollectionRepository repository,
+            IQuoteOwnershipCheck quoteOwnershipCheck,
             IClock clock,
             CancellationToken cancellationToken) =>
         {
@@ -80,6 +102,13 @@ public static class CollectionsEndpoints
 
             if (collection.OwnerId != userId)
                 return Results.Forbid();
+
+            // Collections has no direct access to the Quotes database — this is the
+            // same cross-module contract Identity uses for ownership checks, reused
+            // here to confirm the quote actually exists before storing its id.
+            var quoteOwnerId = await quoteOwnershipCheck.GetOwnerUserIdAsync(request.QuoteId, cancellationToken);
+            if (quoteOwnerId is null)
+                return Results.NotFound(new { message = $"Quote {request.QuoteId} does not exist." });
 
             collection.AddItem(request.QuoteId, clock);
             await repository.Update(collection, cancellationToken);

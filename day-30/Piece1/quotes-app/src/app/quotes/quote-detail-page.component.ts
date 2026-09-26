@@ -1,9 +1,12 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Location } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { QuoteService } from './quote.service';
 import { QuoteDetail } from './quote.model';
+import { CollectionService } from '../collections/collection.service';
+import { Collection } from '../collections/collection.model';
 
 @Component({
   selector: 'app-quote-detail-page',
@@ -15,6 +18,8 @@ export class QuoteDetailPageComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly quoteService = inject(QuoteService);
   private readonly authService = inject(AuthService);
+  private readonly collectionService = inject(CollectionService);
+  private readonly location = inject(Location);
 
   readonly isAuthenticated = this.authService.isAuthenticated;
   readonly quote = signal<QuoteDetail | null>(null);
@@ -22,10 +27,28 @@ export class QuoteDetailPageComponent {
   readonly newTagName = signal('');
   readonly tagError = signal<string | null>(null);
 
-  private readonly quoteId = Number(this.route.snapshot.paramMap.get('id'));
+  readonly collections = signal<Collection[]>([]);
+  readonly addToCollectionError = signal<string | null>(null);
+
+  readonly memberCollections = computed(() => this.collections().filter((c) => this.isInCollection(c)));
+  readonly availableCollections = computed(() => this.collections().filter((c) => !this.isInCollection(c)));
+
+  readonly quoteId = Number(this.route.snapshot.paramMap.get('id'));
 
   constructor() {
     this.load();
+
+    if (this.isAuthenticated()) {
+      this.loadCollections();
+    }
+  }
+
+  private loadCollections(): void {
+    this.collectionService.getMine().subscribe((collections) => this.collections.set(collections));
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
   private load(): void {
@@ -59,5 +82,29 @@ export class QuoteDetailPageComponent {
       next: () => this.load(),
       error: () => this.tagError.set('Only the owner of this quote can manage its tags.'),
     });
+  }
+
+  isInCollection(collection: Collection): boolean {
+    return collection.items.some((item) => item.quoteId === this.quoteId);
+  }
+
+  toggleCollection(collection: Collection): void {
+    this.addToCollectionError.set(null);
+
+    const call = this.isInCollection(collection)
+      ? this.collectionService.removeItem(collection.id, this.quoteId)
+      : this.collectionService.addItem(collection.id, this.quoteId);
+
+    call.subscribe({
+      next: () => this.loadCollections(),
+      error: () => this.addToCollectionError.set('Could not update that collection.'),
+    });
+  }
+
+  addToCollectionById(collectionId: string): void {
+    const collection = this.collections().find((c) => c.id === Number(collectionId));
+    if (collection) {
+      this.toggleCollection(collection);
+    }
   }
 }

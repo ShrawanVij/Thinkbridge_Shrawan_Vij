@@ -14,8 +14,11 @@
     <ul>
       @for (collection of collections(); track collection.id) {
         <li>
-          <a [routerLink]="['/collections', collection.id]">{{ collection.name }}</a>
-          ({{ collection.items.length }} quote{{ collection.items.length === 1 ? '' : 's' }})
+          <span>
+            <a [routerLink]="['/collections', collection.id]">{{ collection.name }}</a>
+            ({{ collection.items.length }} quote{{ collection.items.length === 1 ? '' : 's' }})
+          </span>
+          <button type="button" (click)="delete(collection.id)">Delete</button>
         </li>
       }
     </ul>

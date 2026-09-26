@@ -4,7 +4,10 @@
   } @else if (forbidden()) {
     <p class="error">This isn't your collection.</p>
   } @else if (collection(); as c) {
-    <h1>{{ c.name }}</h1>
+    <header class="collection-detail-header">
+      <h1>{{ c.name }}</h1>
+      <button type="button" (click)="delete()">Delete collection</button>
+    </header>
 
     <form (ngSubmit)="addQuote()" class="add-quote-form">
       <input
@@ -16,6 +19,10 @@
       />
       <button type="submit">Add quote</button>
     </form>
+
+    @if (addQuoteError()) {
+      <p class="error">{{ addQuoteError() }}</p>
+    }
 
     @if (c.items.length === 0) {
       <p>No quotes in this collection yet.</p>

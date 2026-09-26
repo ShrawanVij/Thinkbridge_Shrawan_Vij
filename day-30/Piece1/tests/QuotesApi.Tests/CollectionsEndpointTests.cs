@@ -74,6 +74,50 @@ public class CollectionsEndpointTests
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
+    [Fact]
+    public async Task AddItem_QuoteDoesNotExist_Returns404()
+    {
+        var owner = CreateClientAsUser(TestFactory.CreateFactory<MultiUserTestAuthHandler>(), 1);
+        var created = await owner.PostAsJsonAsync("/collections", new { name = "User 1's collection" });
+        var collectionId = (await created.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetInt32();
+
+        // No quote with this id was ever created in this test's isolated database —
+        // this is the regression test for the bug where AddItem stored whatever
+        // quoteId the client sent without checking it existed at all.
+        var response = await owner.PostAsJsonAsync($"/collections/{collectionId}/items", new { quoteId = 999_999 });
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DeleteCollection_Owner_RemovesIt()
+    {
+        var owner = CreateClientAsUser(TestFactory.CreateFactory<MultiUserTestAuthHandler>(), 1);
+        var created = await owner.PostAsJsonAsync("/collections", new { name = "Temporary" });
+        var collectionId = (await created.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetInt32();
+
+        var deleteResponse = await owner.DeleteAsync($"/collections/{collectionId}");
+        Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
+
+        var getResponse = await owner.GetAsync($"/collections/{collectionId}");
+        Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task DeleteCollection_OwnedByAnotherUser_Returns403()
+    {
+        var factory = TestFactory.CreateFactory<MultiUserTestAuthHandler>();
+
+        var owner = CreateClientAsUser(factory, 1);
+        var created = await owner.PostAsJsonAsync("/collections", new { name = "User 1's collection" });
+        var collectionId = (await created.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetInt32();
+
+        var otherUser = CreateClientAsUser(factory, 2);
+        var response = await otherUser.DeleteAsync($"/collections/{collectionId}");
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
     private static HttpClient CreateClientAsUser(Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<Program> factory, int userId)
     {
         var client = factory.CreateClient();

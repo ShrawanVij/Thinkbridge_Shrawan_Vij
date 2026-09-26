@@ -1,5 +1,5 @@
 import { Component, effect, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { QuoteService } from './quote.service';
 import { QuoteFeedItem, SortOrder } from './quote.model';
@@ -13,6 +13,7 @@ import { QuoteFeedItem, SortOrder } from './quote.model';
 export class QuoteFeedPageComponent {
   private readonly quoteService = inject(QuoteService);
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   readonly isAuthenticated = this.authService.isAuthenticated;
 
@@ -68,6 +69,10 @@ export class QuoteFeedPageComponent {
 
   setSortOrder(value: string): void {
     this.sortOrder.set(value as SortOrder);
+  }
+
+  openQuote(id: number): void {
+    this.router.navigate(['/quotes', id]);
   }
 
   deleteQuote(id: number): void {
