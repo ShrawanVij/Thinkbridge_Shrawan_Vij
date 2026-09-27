@@ -34,9 +34,6 @@ param sqlMaxSizeBytes int
 @description('Service Bus namespace SKU')
 param serviceBusSkuName string
 
-@description('Entra ID application (client) ID for Container Apps built-in authentication')
-param entraIdClientId string
-
 // SQL logical server names are globally unique across all of Azure (like storage
 // accounts), not just this subscription — 'sql-quotes-dev' is already taken by
 // someone else, so a uniqueness token is appended to the server name only.
@@ -122,7 +119,6 @@ module api 'modules/api.bicep' = {
     sqlDatabaseNames: sqlDatabaseNames
     serviceBusHostName: serviceBus.outputs.namespaceHostName
     jwtSecretUri: keyVault.outputs.jwtSecretUri
-    entraIdClientId: entraIdClientId
   }
 }
 

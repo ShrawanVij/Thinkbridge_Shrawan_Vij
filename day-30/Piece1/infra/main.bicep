@@ -39,9 +39,6 @@ param sqlMaxSizeBytes int
 @description('Service Bus namespace SKU')
 param serviceBusSkuName string
 
-@description('Entra ID application (client) ID for Container Apps built-in authentication')
-param entraIdClientId string
-
 var tags = {
   'azd-env-name': environmentName
 }
@@ -68,7 +65,6 @@ module resources 'resources.bicep' = {
     sqlSkuTier: sqlSkuTier
     sqlMaxSizeBytes: sqlMaxSizeBytes
     serviceBusSkuName: serviceBusSkuName
-    entraIdClientId: entraIdClientId
   }
 }
 

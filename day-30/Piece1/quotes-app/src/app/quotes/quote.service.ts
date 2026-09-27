@@ -48,6 +48,10 @@ export class QuoteService {
     return this.http.get<QuoteFeedItem[]>(`${this.baseUrl}/cqrs/quotes/feed`, { params });
   }
 
+  getAuthors(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/api/quotes/authors`);
+  }
+
   getById(id: number): Observable<QuoteDetail> {
     return this.http.get<QuoteDetail>(`${this.baseUrl}/api/quotes/${id}`);
   }

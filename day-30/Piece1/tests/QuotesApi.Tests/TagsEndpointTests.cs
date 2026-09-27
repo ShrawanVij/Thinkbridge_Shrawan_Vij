@@ -74,6 +74,21 @@ public class TagsEndpointTests
         Assert.Empty(detail.GetProperty("tags").EnumerateArray());
     }
 
+    [Fact]
+    public async Task GetAuthors_ReturnsDistinctSortedNames()
+    {
+        var factory = TestFactory.CreateFactory<MultiUserTestAuthHandler>();
+        var client = AsUser(factory, 1);
+
+        await client.PostAsJsonAsync("/cqrs/quotes", new { author = "Rumi", text = "First quote." });
+        await client.PostAsJsonAsync("/cqrs/quotes", new { author = "Rumi", text = "Second quote, same author." });
+        await client.PostAsJsonAsync("/cqrs/quotes", new { author = "Confucius", text = "Third quote." });
+
+        var authors = await client.GetFromJsonAsync<List<string>>("/api/quotes/authors");
+
+        Assert.Equal(["Confucius", "Rumi"], authors);
+    }
+
     private static HttpClient AsUser(Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<Program> factory, int userId)
     {
         var client = factory.CreateClient();

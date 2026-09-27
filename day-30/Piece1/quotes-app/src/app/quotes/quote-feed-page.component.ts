@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { QuoteService } from './quote.service';
@@ -24,10 +24,21 @@ export class QuoteFeedPageComponent {
   readonly mineOnly = signal(false);
   readonly sortOrder = signal<SortOrder>('newest');
 
+  readonly authors = signal<string[]>([]);
+  // Derived, not a separate signal to keep in sync -- an author bubble reads
+  // as "selected" exactly when it's an exact match for the current search
+  // term, whether that got there by clicking the bubble or by typing.
+  readonly selectedAuthor = computed(() => {
+    const term = this.searchTerm();
+    return this.authors().includes(term) ? term : null;
+  });
+
   private searchDebounce?: ReturnType<typeof setTimeout>;
   private requestId = 0;
 
   constructor() {
+    this.quoteService.getAuthors().subscribe((authors) => this.authors.set(authors));
+
     effect((onCleanup) => {
       const term = this.searchTerm();
       const mine = this.mineOnly();
@@ -61,6 +72,10 @@ export class QuoteFeedPageComponent {
 
   setSearchTerm(value: string): void {
     this.searchTerm.set(value);
+  }
+
+  toggleAuthor(author: string): void {
+    this.searchTerm.set(this.selectedAuthor() === author ? '' : author);
   }
 
   toggleMineOnly(): void {

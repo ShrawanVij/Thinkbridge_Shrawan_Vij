@@ -25,6 +25,22 @@
     }
   </div>
 
+  @if (authors().length > 0) {
+    <ul class="author-bubbles">
+      @for (author of authors(); track author) {
+        <li>
+          <button
+            type="button"
+            [class.selected]="selectedAuthor() === author"
+            (click)="toggleAuthor(author)"
+          >
+            {{ author }}
+          </button>
+        </li>
+      }
+    </ul>
+  }
+
   @if (loading()) {
     <p>Loading…</p>
   } @else if (error()) {
