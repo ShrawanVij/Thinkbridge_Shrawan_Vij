@@ -23,6 +23,20 @@ public static class TagsEndpoints
             return Results.Ok(tags);
         });
 
+        // Distinct author names across every quote -- backs the feed page's
+        // author picker. Reads the whole table's Author column rather than
+        // paging, same tradeoff /api/tags already makes.
+        app.MapGet("/api/quotes/authors", async (QuotesDbContext db, CancellationToken cancellationToken) =>
+        {
+            var authors = await db.Quotes
+                .Select(q => q.Author)
+                .Distinct()
+                .OrderBy(a => a)
+                .ToListAsync(cancellationToken);
+
+            return Results.Ok(authors);
+        });
+
         // Attaching/detaching a tag is an edit of the quote, so it's gated
         // the same way editing the quote's own text is — same ownership
         // policy, same resource-based check.

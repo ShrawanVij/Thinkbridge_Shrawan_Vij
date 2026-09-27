@@ -226,6 +226,28 @@ blockquote {
   white-space: nowrap;
 }
 
+.author-bubbles {
+  list-style: none;
+  margin: 0 0 var(--space-2);
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.author-bubbles button {
+  border-radius: 999px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.author-bubbles button.selected {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+}
+
 .quote-list {
   list-style: none;
   margin: 0;
