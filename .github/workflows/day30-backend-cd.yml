@@ -1,0 +1,82 @@
+name: Day 30 Backend CD
+
+# Gate: deploy only runs if test passes (job dependency below).
+# Post-deploy check: smoke-test hits the live /health endpoint before
+# calling the run successful — a broken deploy shows red here, not
+# silently in production.
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "day-30/Piece1/src/**"
+      - "day-30/Piece1/tests/**"
+      - "day-30/Piece1/QuotesApi.slnx"
+      - ".github/workflows/day30-backend-cd.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        working-directory: day-30/Piece1
+        run: dotnet restore QuotesApi.slnx
+
+      - name: Test
+        working-directory: day-30/Piece1
+        run: dotnet test QuotesApi.slnx --configuration Release --no-restore
+
+  deploy:
+    name: Deploy (only if test passed)
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install azd
+        uses: Azure/setup-azd@v2
+
+      - name: Log in to Azure
+        run: |
+          azd auth login \
+            --client-id "${{ secrets.AZURE_CLIENT_ID }}" \
+            --client-secret "${{ secrets.AZURE_CLIENT_SECRET }}" \
+            --tenant-id "${{ secrets.AZURE_TENANT_ID }}"
+
+      - name: Restore the dev azd environment
+        working-directory: day-30/Piece1
+        run: |
+          azd env new dev --no-prompt \
+            --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
+            --location centralindia
+          azd env refresh --no-prompt
+
+      - name: Deploy the API
+        working-directory: day-30/Piece1
+        run: azd deploy api --no-prompt
+
+  smoke-test:
+    name: Verify the live deployment is healthy
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Poll /health until it responds 200
+        run: |
+          url="https://quotes-api-dev.agreeablemoss-41b8d1af.centralindia.azurecontainerapps.io/health"
+          for attempt in $(seq 1 12); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
+            if [ "$code" = "200" ]; then
+              echo "Healthy after attempt $attempt."
+              exit 0
+            fi
+            echo "Attempt $attempt: got HTTP $code, retrying in 10s..."
+            sleep 10
+          done
+          echo "Deployment did not become healthy within the timeout."
+          exit 1
