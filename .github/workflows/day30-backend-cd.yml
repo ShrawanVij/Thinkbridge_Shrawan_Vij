@@ -68,7 +68,12 @@ jobs:
           # --subscription/--location do, so it has to be set explicitly or
           # `azd env refresh` has no way to resolve this Bicep parameter.
           azd env set CONTAINER_APPS_ENVIRONMENT_ID "$cae_id"
-          azd env refresh --no-prompt
+          # `azd env refresh` doesn't repopulate custom Bicep outputs like
+          # AZURE_CONTAINER_REGISTRY_ENDPOINT (only azd's own core env vars),
+          # which is exactly what `azd deploy` needs to find the registry to
+          # push to. `azd provision` against already-matching infra is a safe
+          # no-op confirmation, not a destructive re-create.
+          azd provision --no-prompt
 
       - name: Deploy the API
         working-directory: day-30/Piece1
