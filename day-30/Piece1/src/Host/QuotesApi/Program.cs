@@ -51,13 +51,17 @@ builder.Services.AddRateLimiter(options =>
             }));
 });
 
+// Read from config (Cors:AllowedOrigins, comma-separated), not hardcoded --
+// so a new frontend origin is an env var change on the Container App, not a
+// code change that needs a full rebuild + redeploy. Same pattern this app
+// already uses for Jwt:Key via Key Vault.
+var corsAllowedOrigins = (builder.Configuration["Cors:AllowedOrigins"] ?? string.Empty)
+    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AngularDev", policy =>
-        policy.WithOrigins(
-                "http://localhost:4200", "http://127.0.0.1:4200", "http://localhost:4210", "http://127.0.0.1:4210",
-                "https://thankful-wave-06e439500.7.azurestaticapps.net",
-                "https://yellow-field-0c0e7f300.3.azurestaticapps.net")
+        policy.WithOrigins(corsAllowedOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod()
             // Required so the browser stores/sends the HttpOnly refreshToken
