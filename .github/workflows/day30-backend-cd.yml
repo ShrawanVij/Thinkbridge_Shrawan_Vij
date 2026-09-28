@@ -52,17 +52,22 @@ jobs:
       - name: Restore the dev azd environment
         working-directory: day-30/Piece1
         run: |
+          # Repo Variables get pasted by hand at some point, and a stray
+          # copy-pasted \r (Windows line ending) breaks azd's parameter JSON
+          # with an opaque "invalid character '\r'" error -- strip it
+          # defensively rather than trust every future paste to be clean.
+          location=$(printf '%s' "${{ vars.AZURE_LOCATION }}" | tr -d '\r\n')
+          cae_id=$(printf '%s' "${{ vars.CONTAINER_APPS_ENVIRONMENT_ID }}" | tr -d '\r\n')
+
           azd env new dev --no-prompt \
             --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
-            --location "${{ vars.AZURE_LOCATION }}"
+            --location "$location"
           # Not a secret -- a resource ID for the shared Container Apps
           # environment, the same one set locally via `azd env set` during
           # the original provision. Has no azd-builtin flag like
           # --subscription/--location do, so it has to be set explicitly or
           # `azd env refresh` has no way to resolve this Bicep parameter.
-          # Comes from a repo Variable, not hardcoded here, so changing
-          # environments is a settings change, not a code change.
-          azd env set CONTAINER_APPS_ENVIRONMENT_ID "${{ vars.CONTAINER_APPS_ENVIRONMENT_ID }}"
+          azd env set CONTAINER_APPS_ENVIRONMENT_ID "$cae_id"
           azd env refresh --no-prompt
 
       - name: Deploy the API
@@ -84,9 +89,12 @@ jobs:
       - name: Look up the live FQDN (never hardcoded -- asks Azure directly)
         id: app
         run: |
+          app_name=$(printf '%s' "${{ vars.CONTAINER_APP_NAME }}" | tr -d '\r\n')
+          rg=$(printf '%s' "${{ vars.RESOURCE_GROUP }}" | tr -d '\r\n')
+
           fqdn=$(az containerapp show \
-            --name "${{ vars.CONTAINER_APP_NAME }}" \
-            --resource-group "${{ vars.RESOURCE_GROUP }}" \
+            --name "$app_name" \
+            --resource-group "$rg" \
             --query "properties.configuration.ingress.fqdn" -o tsv)
           echo "fqdn=$fqdn" >> "$GITHUB_OUTPUT"
 
