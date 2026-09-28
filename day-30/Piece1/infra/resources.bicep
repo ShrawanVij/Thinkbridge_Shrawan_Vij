@@ -63,7 +63,14 @@ module identity 'modules/identity.bicep' = {
 module keyVault 'modules/keyvault.bicep' = {
   name: 'keyvault'
   params: {
-    name: 'kv-quotes-${environmentName}'
+    // Key Vault names are globally unique across all of Azure, same as SQL
+    // server names -- 'kv-quotes-prod' collided with someone else's vault
+    // outside this subscription. 'dev' keeps its exact existing name (already
+    // live, holding the real signing key -- renaming it here would make Bicep
+    // treat it as removed and try to delete it); any other environment gets a
+    // short uniqueness suffix so the same collision can't happen again. Kept
+    // short (6 chars) because vault names have a 24-character limit.
+    name: environmentName == 'dev' ? 'kv-quotes-dev' : 'kv-quotes-${environmentName}-${take(resourceToken, 6)}'
     location: location
     readerPrincipalId: identity.outputs.principalId
   }
