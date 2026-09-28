@@ -37,6 +37,9 @@
     },
     "serviceBusSkuName": {
       "value": "${SERVICE_BUS_SKU_NAME=Standard}"
+    },
+    "corsAllowedOrigins": {
+      "value": "${CORS_ALLOWED_ORIGINS=http://localhost:4200,http://127.0.0.1:4200,http://localhost:4210,http://127.0.0.1:4210,https://thankful-wave-06e439500.7.azurestaticapps.net,https://yellow-field-0c0e7f300.3.azurestaticapps.net}"
     }
   }
 }

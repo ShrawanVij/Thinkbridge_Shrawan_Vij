@@ -39,6 +39,9 @@ param sqlMaxSizeBytes int
 @description('Service Bus namespace SKU')
 param serviceBusSkuName string
 
+@description('Comma-separated list of frontend origins allowed to call the API')
+param corsAllowedOrigins string
+
 var tags = {
   'azd-env-name': environmentName
 }
@@ -65,6 +68,7 @@ module resources 'resources.bicep' = {
     sqlSkuTier: sqlSkuTier
     sqlMaxSizeBytes: sqlMaxSizeBytes
     serviceBusSkuName: serviceBusSkuName
+    corsAllowedOrigins: corsAllowedOrigins
   }
 }
 

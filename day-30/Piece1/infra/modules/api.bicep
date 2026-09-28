@@ -43,6 +43,9 @@ param serviceBusHostName string
 @description('Key Vault URI of the JWT signing secret')
 param jwtSecretUri string
 
+@description('Comma-separated list of frontend origins allowed to call this API — an env var, not a code change, so adding a new frontend never needs a rebuild')
+param corsAllowedOrigins string
+
 // One SQL connection string per module database — same server, same
 // managed-identity auth, different Database= only. No password anywhere:
 // Authentication=Active Directory Managed Identity resolves via the
@@ -130,6 +133,10 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
             {
               name: 'Jwt__Key'
               secretRef: 'jwt-signing-key'
+            }
+            {
+              name: 'Cors__AllowedOrigins'
+              value: corsAllowedOrigins
             }
           ]
         }

@@ -34,6 +34,9 @@ param sqlMaxSizeBytes int
 @description('Service Bus namespace SKU')
 param serviceBusSkuName string
 
+@description('Comma-separated list of frontend origins allowed to call the API')
+param corsAllowedOrigins string
+
 // SQL logical server names are globally unique across all of Azure (like storage
 // accounts), not just this subscription — 'sql-quotes-dev' is already taken by
 // someone else, so a uniqueness token is appended to the server name only.
@@ -119,6 +122,7 @@ module api 'modules/api.bicep' = {
     sqlDatabaseNames: sqlDatabaseNames
     serviceBusHostName: serviceBus.outputs.namespaceHostName
     jwtSecretUri: keyVault.outputs.jwtSecretUri
+    corsAllowedOrigins: corsAllowedOrigins
   }
 }
 
