@@ -10,6 +10,8 @@ on:
     paths:
       - "day-30/Piece1/src/**"
       - "day-30/Piece1/tests/**"
+      - "day-30/Piece1/infra/**"
+      - "day-30/Piece1/azure.yaml"
       - "day-30/Piece1/QuotesApi.slnx"
       - ".github/workflows/day30-backend-cd.yml"
 
